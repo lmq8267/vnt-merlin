@@ -842,9 +842,6 @@ function openssHint(itemNum) {
 	} else if (itemNum == 4) {
 		statusmenu = "显示程序的进程状态及 pid";
 		_caption = "运行状态";
-	} else if (itemNum == 5) {
-		statusmenu = "连接池，留空默认0，frp预先和后端服务建立起指定数量的连接。此功能适合有大量短连接请求时开启，其有效值受 Frps 配置文件中 transport.maxPoolCount 设定值限制。注: 当 TCP 多路复用启用后，连接池的提升有限，一般场景下无需关心。";
-		_caption = " transport.poolCount 字段";
 	} else if (itemNum == 6) {
 		statusmenu = "当前设备网卡生成的虚拟的IP地址，由服务器自动分配还是手动指定";
 		_caption = "接口模式";
@@ -879,7 +876,7 @@ function openssHint(itemNum) {
 		statusmenu = "设置虚拟网卡的mtu值，大多数情况下（留空）使用默认值效率会更高，也可根据实际情况进行微调，默认值：不加密1450，加密1410 ";
 		_caption = "MTU值";
 	} else if (itemNum == 17) {
-		statusmenu = "定时执行操作。<font color='#F46'>检查：</font>检查frp的进程是否存在，若不存在则重新启动；<font color='#F46'>启动：</font>重新启动frp进程，而不论当时是否在正常运行。重新启动服务会导致活动中的连接短暂中断.<br><font color='#F46'>注意：</font>填写内容为 0 关闭定时功能！<br/>建议：选择分钟填写“60的因数”【1、2、3、4、5、6、10、12、15、20、30、60】，选择小时填写“24的因数”【1、2、3、4、6、8、12、24】。";
+		statusmenu = "定时执行操作。<font color='#F46'>检查：</font>检查vnt的进程是否存在，若不存在则重新启动；<font color='#F46'>启动：</font>重新启动vnt进程，而不论当时是否在正常运行。重新启动服务会导致活动中的连接短暂中断.<br><font color='#F46'>注意：</font>填写内容为 0 关闭定时功能！<br/>建议：选择分钟填写“60的因数”【1、2、3、4、5、6、10、12、15、20、30、60】，选择小时填写“24的因数”【1、2、3、4、6、8、12、24】。";
 		_caption = "定时功能";
 	} else if (itemNum == 18) {
 		statusmenu = "默认留空，任务并行度(必须为正整数),默认值为1,该值表示处理网卡读写的任务数,组网设备数较多、处理延迟较大时可适当调大此值";
