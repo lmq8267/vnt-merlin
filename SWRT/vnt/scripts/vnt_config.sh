@@ -280,6 +280,7 @@ fi
 }
 
 fun_start_vnt(){
+    fun_nat_start
     [ ! -f "${vnt_path}" ] && fun_updatevnt
     [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
     [ $(($( ${vnt_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt && fun_start_vnts
@@ -404,6 +405,7 @@ EOF
 }
 
 fun_start_vnts(){
+    fun_nat_start
     [ ! -f "${vnts_path}" ] && fun_updatevnts
     [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
     [ $(($( ${vnts_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
