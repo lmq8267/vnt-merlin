@@ -389,10 +389,13 @@ EOF
     fi
     dbus set vnt_startcmd="$vnt_path $vntcmd"
     logg "当前客户端启动参数 $vnt_path $vntcmd " "vnt-cli"
+    if [ "$(lsmod |grep tun |grep -wc tun)" == "0" ]; then
+		insmod tun
+    fi
     cd $(dirname $vnt_path)
     rm -rf /var/run/vnt-cli.pid
     killall vnt-cli 2>/dev/null
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnt-cli.pid --background --startas /bin/sh -- -c  " ./vnt-cli ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1"
+    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnt-cli.pid --background --startas /bin/sh -- -c  "$vnt_path ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1"
    sleep 5
    [ ! -z "$(pidof vnt-cli)" ] && logg "vnt-cli_${vntcli_ver}客户端启动成功！" "vnt-cli" 
    echo `date +%s` > /tmp/vnt_time
@@ -466,7 +469,7 @@ EOF
     cd $(dirname $vnts_path)
     rm -rf /var/run/vnts.pid
     killall vnts 2>/dev/null
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "./vnts ${vntscmd} >>/home/root/log/vnts.log 2>&1"
+    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "${vnts_path} ${vntscmd} >>/home/root/log/vnts.log 2>&1"
    sleep 5
    [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端端启动成功！" "vnts"
    echo `date +%s` > /tmp/vnts_time
