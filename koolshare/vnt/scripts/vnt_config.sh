@@ -146,6 +146,7 @@ onkillvnt(){
 		kill -9 "${PID}" >/dev/null 2>&1
     fi
     rm -f /var/run/vnt-cli.pid
+    [ -n "$(cru l | grep vnt_rules)" ] && cru d vnt_rules
    iptables -D INPUT -i vnt-tun -j ACCEPT 2>/dev/null
    iptables -D FORWARD -i vnt-tun -o vnt-tun -j ACCEPT 2>/dev/null
    iptables -D FORWARD -i vnt-tun -j ACCEPT 2>/dev/null
@@ -159,10 +160,11 @@ onkillvnts(){
 		kill -9 "${PIDS}" >/dev/null 2>&1
     fi
     rm -f /var/run/vnts.pid
+    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules
     iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-    iptables -D INPUT -p tcp --dport $vnts_port-j ACCEPT 2>/dev/null
+    iptables -D INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-    ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+    ip6tables -D INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
 } 
 # 停止并清理
 onstop(){
@@ -404,7 +406,7 @@ EOF
    iptables -I FORWARD -i vnt-tun -j ACCEPT
    iptables -I INPUT -i vnt-tun -j ACCEPT
    [ "$vnt_proxy_enable" = "1" ] && echo 1 > /proc/sys/net/ipv4/ip_forward
-   
+   [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep 'vnt')\" && /bin/sh /koolshare/scripts/vnt_config.sh restartvnt"
 }
 
 fun_start_vnts(){
@@ -471,12 +473,18 @@ EOF
     killall vnts 2>/dev/null
     start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "${vnts_path} ${vntscmd} >>/home/root/log/vnts.log 2>&1"
    sleep 5
-   [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端端启动成功！" "vnts"
+   [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端启动成功！" "vnts"
    echo `date +%s` > /tmp/vnts_time
    iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-   iptables -I INPUT -p tcp --dport $vnts_port-j ACCEPT 2>/dev/null
+   iptables -I INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-   ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+   ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
+   if [ -z "$(cru l | grep vnts_rules)" ] && [ ! -z "$vnts_port" ] ; then
+      cru a vnts_rules "*/2 * * * * iptables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT"
+      cru a vnts_rules "*/2 * * * * iptables -C INPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
+      cru a vnts_rules "*/2 * * * * ip6tables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT"
+      cru a vnts_rules "*/2 * * * * ip6tables -C INPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
+   fi
 }
 
 fun_start_stop(){
