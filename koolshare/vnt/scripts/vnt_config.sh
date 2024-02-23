@@ -99,8 +99,6 @@ logg () {
 fun_nat_start(){
     if [ "${vnt_enable}"x = "1"x ] || [ "${vnts_enable}"x = "1"x ];then
 	    [ ! -L "/koolshare/init.d/N99vnt.sh" ] && ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/N99vnt.sh
-    else
-	    rm -f /koolshare/init.d/N99vnt.sh
     fi
 }
 # 定时任务
@@ -171,8 +169,6 @@ onstop(){
 	onkillvnt
 	onkillvnts
 	logger "【软件中心】：关闭 vnt..."
-	rm -f /koolshare/init.d/?99vnt.sh
-	
         [ -z "$(pidof vnt-cli)" ] && logg "客户端已停止运行" "vnt-cli"
         [ -z "$(pidof vnts)" ] &&  logg "服务端已停止运行" "vnts"
 }
@@ -284,6 +280,7 @@ fi
 }
 
 fun_start_vnt(){
+     fun_nat_start
     [ ! -f "${vnt_path}" ] && fun_updatevnt
     [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
     [ $(($( ${vnt_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt
@@ -408,6 +405,7 @@ EOF
 }
 
 fun_start_vnts(){
+     fun_nat_start
     [ ! -f "${vnts_path}" ] && fun_updatevnts
     [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
     [ $(($( ${vnts_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
