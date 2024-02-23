@@ -99,8 +99,6 @@ logg () {
 fun_nat_start(){
     if [ "${vnt_enable}"x = "1"x ] || [ "${vnts_enable}"x = "1"x ];then
 	    [ ! -L "/jffs/softcenter/init.d/S99vnt.sh" ] && ln -sf /jffs/softcenter/scripts/vnt_config.sh /jffs/softcenter/init.d/S99vnt.sh
-    else
-	    rm -f /jffs/softcenter/init.d/S99vnt.sh
     fi
 }
 # 定时任务
@@ -171,7 +169,6 @@ onstop(){
 	onkillvnt
 	onkillvnts
 	logger "【软件中心】：关闭 vnt..."
-	rm -f /jffs/softcenter/init.d/?99vnt.sh
         [ -z "$(pidof vnt-cli)" ] && logg "客户端已停止运行" "vnt-cli"
         [ -z "$(pidof vnts)" ] &&  logg "服务端已停止运行" "vnts"
 }
