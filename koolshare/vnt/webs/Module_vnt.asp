@@ -364,8 +364,8 @@ function clear_vntslog() {
 	});
 }
 function menu_hook(title, tab) {
-	tabtitle[tabtitle.length - 1] = new Array("", "软件中心", "离线安装", "VNT");
-	tablink[tablink.length - 1] = new Array("", "Main_Soft_center.asp", "Main_Soft_setting.asp", "Module_vnt.asp");
+	tabtitle[tabtitle.length - 1] = new Array("", "VNT");
+	tablink[tablink.length - 1] = new Array("", "Module_vnt.asp");
 }
 
 function get_vnt_log() {
