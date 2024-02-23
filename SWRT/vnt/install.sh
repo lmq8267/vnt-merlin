@@ -29,6 +29,7 @@ ln -sf /jffs/softcenter/scripts/vnt_config.sh /jffs/softcenter/init.d/S99vnt.sh
 
 chmod +x /jffs/softcenter/scripts/vnt_*
 chmod +x /jffs/softcenter/init.d/S99vnt.sh
+chmod +x /jffs/softcenter/scripts/uninstall_vnt.sh
 dbus set softcenter_module_vnt_description=简便高效的异地组网、内网穿透工具
 dbus set softcenter_module_vnt_install=1
 dbus set softcenter_module_vnt_name=vnt
