@@ -142,8 +142,9 @@ onkillvnt(){
     PID=$(pidof vnt-cli)
     [ -n "$(cru l | grep vnt_monitor)" ] && cru d vnt_monitor
     if [ -n "${PID}" ];then
-		start-stop-daemon -K -p /var/run/vnt-cli.pid >/dev/null 2>&1
+		
 		kill -9 "${PID}" >/dev/null 2>&1
+                killall vnt-cli >/dev/null 2>&1
     fi
     rm -f /var/run/vnt-cli.pid
     [ -n "$(cru l | grep vnt_rules)" ] && cru d vnt_rules
@@ -395,9 +396,9 @@ EOF
 		insmod tun
     fi
     cd $(dirname $vnt_path)
-    rm -rf /var/run/vnt-cli.pid
+    
     killall vnt-cli 2>/dev/null
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnt-cli.pid --background --startas /bin/sh -- -c  "$vnt_path ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1"
+    ./vnt-cli ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1
    sleep 5
    [ ! -z "$(pidof vnt-cli)" ] && logg "vnt-cli_${vntcli_ver}客户端启动成功！" "vnt-cli" 
    echo `date +%s` > /tmp/vnt_time
