@@ -647,9 +647,9 @@ function toggle_func() {
 	$("#vnt_passmode").change(
 		function(){
 		if(E("vnt_passmode").value == "off"){
-			E("vnt_key").style.display = "none";
+			E("vnt_keys").style.display = "none";
 		}else{
-		    E("vnt_key").style.display = "";
+		    E("vnt_keys").style.display = "";
 		}
 	});
 }
@@ -662,9 +662,9 @@ function update_visibility(){
         E("static_ip").style.display = "none";
     }
 	if(db_vnt["vnt_passmode"] == "off"){
-	    E("vnt_key").style.display = "none";
+	    E("vnt_keys").style.display = "none";
 	}else{
-		E("vnt_key").style.display = "";
+		E("vnt_keys").style.display = "";
 	}
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -1262,7 +1262,7 @@ function get_installog(s) {
                                                 </select>
                                             </td>
                                         </tr>
-                                        <tr id="vnt_key" style="display: none;">
+                                        <tr id="vnt_keys" style="display: none;">
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(20)">加密密钥</a></th>
                                             <td>
                                                 <input type="password" name="vnt_key" id="vnt_key" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="" />
