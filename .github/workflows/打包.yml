@@ -44,7 +44,7 @@ jobs:
           tag_name: ${{ env.tag }}
           files: |
             /opt/src/SWRT/vnt-SWRT.tar.gz
-            /opt/src//koolshare/vnt-koolshare.tar.gz
+            /opt/src/koolshare/vnt-koolshare.tar.gz
       - 
        name: 删除工作流
        uses: GitRML/delete-workflow-runs@main
