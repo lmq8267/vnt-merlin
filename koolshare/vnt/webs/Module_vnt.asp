@@ -1257,7 +1257,7 @@ function get_installog(s) {
                                                     <option value="aes_ecb">aes_ecb</option>
 													<option value="sm4_cbc">sm4_cbc</option>
 													<option value="aes_cbc">aes_cbc</option>
-													<option value="static">aes_gcm</option>
+													<option value="aes_gcm">aes_gcm</option>
                                                 </select>
                                             </td>
                                         </tr>
