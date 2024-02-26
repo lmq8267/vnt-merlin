@@ -296,9 +296,6 @@ function save() {
 		if(E("vnt_ipmode").value == "dhcp"){
             E("vnt_static_ip").value = "";
 		}
-		if(E("vnt_passmode").value == "off"){
-            E("vnt_key").value = "";
-		}
 	
 	showLoading(3);
 
