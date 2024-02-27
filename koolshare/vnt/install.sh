@@ -24,12 +24,12 @@ cp -rf /tmp/vnt/scripts/* /koolshare/scripts/
 cp -rf /tmp/vnt/webs/* /koolshare/webs/
 cp -rf /tmp/vnt/res/* /koolshare/res/
 cp /tmp/vnt/uninstall.sh /koolshare/scripts/uninstall_vnt.sh
-ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/N99vnt.sh
+ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/S99vnt.sh
 
 
 chmod +x /koolshare/scripts/vnt_*
 chmod +x /koolshare/scripts/uninstall_vnt.sh
-chmod +x /koolshare/init.d/N99vnt.sh
+chmod +x /koolshare/init.d/S99vnt.sh
 dbus set softcenter_module_vnt_description=简便高效的异地组网、内网穿透工具
 dbus set softcenter_module_vnt_install=1
 dbus set softcenter_module_vnt_name=vnt
