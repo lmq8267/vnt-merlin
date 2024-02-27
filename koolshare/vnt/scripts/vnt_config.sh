@@ -398,7 +398,7 @@ EOF
     cd $(dirname $vnt_path)
     
     killall vnt-cli 2>/dev/null
-   ./vnt-cli ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1
+   ./vnt-cli ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1 &
    sleep 5
    [ ! -z "$(pidof vnt-cli)" ] && logg "vnt-cli_${vntcli_ver}客户端启动成功！" "vnt-cli" 
    echo `date +%s` > /tmp/vnt_time
@@ -472,7 +472,7 @@ EOF
     cd $(dirname $vnts_path)
     rm -rf /var/run/vnts.pid
     killall vnts 2>/dev/null
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "${vnts_path} ${vntscmd} >>/home/root/log/vnts.log 2>&1"
+    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "${vnts_path} ${vntscmd} >>/home/root/log/vnts.log 2>&1 &"
    sleep 5
    [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端启动成功！" "vnts"
    echo `date +%s` > /tmp/vnts_time
