@@ -1,7 +1,7 @@
 #!/bin/sh
 
-eval `dbus export vnt_`
 source /jffs/softcenter/scripts/base.sh
+eval `dbus export vnt_`
 mkdir -p /tmp/upload
 mkdir -p /home/root/log
 touch /home/root/log/vnt-cli.log
@@ -646,6 +646,15 @@ fi
 	fun_start_vnts
 	http_response "$1"
     ;;
+*)
+if [ "${vnt_enable}" != "1" ] && [ "${vnts_enable}" != "1" ] ; then
+logger "【软件中心】：未开启vnt，无需启动..."
+   exit   
+fi
+	fun_start_stop
+	fun_nat_start
+	fun_crontab
+	;;
 esac
 # 界面提交的参数
 case $2 in
