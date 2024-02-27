@@ -98,7 +98,7 @@ logg () {
 # 自启
 fun_nat_start(){
     if [ "${vnt_enable}"x = "1"x ] || [ "${vnts_enable}"x = "1"x ];then
-	    [ ! -L "/koolshare/init.d/S99vnt.sh" ] && ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/S99vnt.sh
+	    [ ! -L "/koolshare/init.d/S49vnt.sh" ] && ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/S49vnt.sh
     fi
 }
 # 定时任务
@@ -650,6 +650,7 @@ if [ "${vnt_enable}" != "1" ] && [ "${vnts_enable}" != "1" ] ; then
 logger "【软件中心】 : 未开启vnt 无需启动..."
    exit  
 fi
+logger "【软件中心】：启动 vnt..."
 	fun_start_stop
 	fun_nat_start
 	fun_crontab
