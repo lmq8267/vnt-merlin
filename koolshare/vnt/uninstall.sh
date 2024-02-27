@@ -18,7 +18,7 @@ done
 sleep 1
 find /koolshare/init.d/ -name "*vnt*" | xargs rm -rf
 rm -rf /koolshare/scripts/vnt*
-rm -rf /koolshar/init.d/?99vnt.sh
+rm -rf /koolshar/init.d/?49vnt.sh
 rm -rf /koolshare/bin/vnt*
 rm -rf /koolshare/webs/Module_vnt.asp
 rm -rf /koolshare/res/icon-vnt.png
