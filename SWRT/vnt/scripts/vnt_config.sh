@@ -47,6 +47,7 @@ vnt_path=`dbus get vnt_path`
 vnts_path=`dbus get vnts_path`
 vnts_mask=`dbus get vnts_mask`
 vnts_gateway=`dbus get vnts_gateway`
+user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
 if [ -z "$vnt_path" ] ; then
    JFFS_AVAIL=$(df | grep -w "/jffs$" | awk '{print $4}')
    if [ "${JFFS_AVAIL}" -lt "4096" ];then
