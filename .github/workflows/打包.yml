@@ -12,6 +12,7 @@ jobs:
           git clone https://github.com/lmq8267/vnt-merlin /opt/src
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+          sudo timedatectl set-timezone "Asia/Shanghai"
           cd /opt/src/SWRT
           rm -rf vnt-SWRT.tar.gz 
           tar czvf vnt-SWRT.tar.gz vnt
@@ -26,7 +27,6 @@ jobs:
           else
           echo "没有任何变动，无需上传提交！"
           fi 
-          sudo timedatectl set-timezone "Asia/Shanghai"
           echo "tar_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
           echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
       - 
