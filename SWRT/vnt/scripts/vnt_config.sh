@@ -162,11 +162,16 @@ onkillvnts(){
 		kill -9 "${PIDS}" >/dev/null 2>&1
     fi
     rm -f /var/run/vnts.pid
-    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules
+    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules 
+    [ -n "$(cru l | grep vnts_rules2)" ] && cru d vnts_rules2
     iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     iptables -D INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
+    iptables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+    iptables -D OUTPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+    ip6tables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+    ip6tables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
 } 
 # 停止并清理
 onstop(){
@@ -481,8 +486,15 @@ EOF
    iptables -I INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
+   iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+   iptables -I OUTPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+   ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
+   ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    if [ -z "$(cru l | grep vnts_rules)" ] && [ ! -z "$vnts_port" ] ; then
       cru a vnts_rules "*/2 * * * * iptables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C INPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C INPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
+   fi
+   if [ -z "$(cru l | grep vnts_rules2)" ] && [ ! -z "$vnts_port" ] ; then
+      cru a vnts_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT"
    fi
 }
 
