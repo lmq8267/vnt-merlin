@@ -162,7 +162,8 @@ onkillvnts(){
 		kill -9 "${PIDS}" >/dev/null 2>&1
     fi
     rm -f /var/run/vnts.pid
-    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules ; cru d vnts_rules2
+    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules 
+    [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules2
     iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     iptables -D INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
