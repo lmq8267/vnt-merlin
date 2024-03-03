@@ -482,10 +482,7 @@ EOF
    ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    if [ -z "$(cru l | grep vnts_rules)" ] && [ ! -z "$vnts_port" ] ; then
-      cru a vnts_rules "*/2 * * * * iptables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT"
-      cru a vnts_rules "*/2 * * * * iptables -C INPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
-      cru a vnts_rules "*/2 * * * * ip6tables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT"
-      cru a vnts_rules "*/2 * * * * ip6tables -C INPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
+      cru a vnts_rules "*/2 * * * * iptables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C INPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C INPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C INPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT"
    fi
 }
 
