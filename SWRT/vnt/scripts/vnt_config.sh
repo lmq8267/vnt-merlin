@@ -347,7 +347,7 @@ EOF
     [ "$vnt_finger_enable" = "1" ] && vntcmd="$vntcmd --finger "
     [ "$vnt_relay_enable" = "1" ] && vntcmd="$vntcmd --relay "
     [ "$vnt_mn_enable" = "1" ] && vntcmd="$vntcmd -m "
-    [ "$vnt_first_latency_enable" = "1" ] && vntcmd="$vntcmd --first_latency"
+    [ "$vnt_first_latency_enable" = "1" ] && vntcmd="$vntcmd --first-latency"
     if [ ! -z "$vnt_localadd" ] ; then
        if echo "$vnt_localadd" | grep -q '|'; then
           localadd=""
