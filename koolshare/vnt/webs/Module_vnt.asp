@@ -1485,7 +1485,7 @@ function get_installog(s) {
     <i>* 注意事项：</i> 请先仔细查阅程序使用文档<br/><br/>
     1、客户端的<i>token</i>为必填项，没有服务器也可单独使用客户端，已内置公共服务器<br/>
     2、<i>点击</i>参数标题的<i>文字</i>，可<i>查看帮助</i>信息。<br/>
-	3、若启动失败，请查看<i>系统记录</i>，有报错提示，或者通过SSH命令行启动测试。<br/>
+	3、若启动失败，请查看程序运行日志，有报错提示，或者通过SSH命令行启动测试。<br/>
 	4、插件会自动下载二进制程序，也可以手动上传程序。<br/>
 </div>
                                     <div id="vnts_log"  class="contentM_qis" style="box-shadow: 3px 3px 10px #000;margin-top: 70px;">
