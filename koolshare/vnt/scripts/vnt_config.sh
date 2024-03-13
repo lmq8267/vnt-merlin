@@ -16,7 +16,7 @@ vnt_W_enable=`dbus get vnt_W_enable`
 vnt_finger_enable=`dbus get vnt_finger_enable`
 vnt_relay_enable=`dbus get vnt_relay_enable`
 vnt_first_latency_enable=`dbus get vnt_first_latency_enable`
-vnt_mn_enable=`dbus get vnt_mn_enable`
+vnt_tun_name=`dbus get vnt_tun_name`
 vnts_finger_enable=`dbus get vnts_finger_enable`
 vnt_cron_time=`dbus get vnt_cron_time`
 vnt_cron_hour_min=`dbus get vnt_cron_hour_min`
@@ -149,10 +149,13 @@ onkillvnt(){
     fi
     rm -f /var/run/vnt-cli.pid
     [ -n "$(cru l | grep vnt_rules)" ] && cru d vnt_rules
+    [ -n "$(cru l | grep vnt_rules2)" ] && cru d vnt_rules2
    iptables -D INPUT -i vnt-tun -j ACCEPT 2>/dev/null
    iptables -D FORWARD -i vnt-tun -o vnt-tun -j ACCEPT 2>/dev/null
    iptables -D FORWARD -i vnt-tun -j ACCEPT 2>/dev/null
    iptables -t nat -D POSTROUTING -o vnt-tun -j MASQUERADE 2>/dev/null
+   iptables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
+   ip6tables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
 }
 onkillvnts(){
     PIDS=$(pidof vnts)
@@ -339,14 +342,22 @@ EOF
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
     [ ! -z "$vnt_par" ] && vntcmd="$vntcmd --par $vnt_par "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
-    [ ! -z "$vnt_port" ] && vntcmd="$vntcmd --port $vnt_port "
+    [ ! -z "$vnt_port" ] && vntcmd="$vntcmd --ports $vnt_port "
     [ ! -z "$vnt_key" ] && vntcmd="$vntcmd -w $vnt_key "
     [ "$vnt_proxy_enable" = "1" ] && vntcmd="$vntcmd --no-proxy "
     [ "$vnt_W_enable" = "1" ] && vntcmd="$vntcmd -W "
     [ "$vnt_passmode" != "off" ] && vntcmd="$vntcmd --model $vnt_passmode "
     [ "$vnt_finger_enable" = "1" ] && vntcmd="$vntcmd --finger "
-    [ "$vnt_relay_enable" = "1" ] && vntcmd="$vntcmd --relay "
-    [ "$vnt_mn_enable" = "1" ] && vntcmd="$vntcmd -m "
+    [ "$vnt_relay_enable" != "all" ] && vntcmd="$vntcmd --use-channel $vnt_relay_enable "
+    if [ ! -z "$vnt_tun_name" ] ; then
+       vnt_tunname="${vnt_tun_name}"
+    else
+       if [ "$vnt_tun_mode" = "tap" ] ; then
+          vnt_tunname="vnt-tap"
+       else
+          vnt_tunname="vnt-tun"
+       fi
+    fi
     [ "$vnt_first_latency_enable" = "1" ] && vntcmd="$vntcmd --first-latency"
     if [ ! -z "$vnt_localadd" ] ; then
        if echo "$vnt_localadd" | grep -q '|'; then
@@ -408,12 +419,18 @@ EOF
    sleep 5
    [ ! -z "$(pidof vnt-cli)" ] && logg "vnt-cli_${vntcli_ver}客户端启动成功！" "vnt-cli" 
    echo `date +%s` > /tmp/vnt_time
-   iptables -t nat -I POSTROUTING -o vnt-tun -j MASQUERADE
-   iptables -I FORWARD -o vnt-tun -j ACCEPT
-   iptables -I FORWARD -i vnt-tun -j ACCEPT
-   iptables -I INPUT -i vnt-tun -j ACCEPT
+   iptables -t nat -I POSTROUTING -o ${vnt_tunname} -j MASQUERADE
+   iptables -I FORWARD -o ${vnt_tunname} -j ACCEPT
+   iptables -I FORWARD -i ${vnt_tunname} -j ACCEPT
+   iptables -I INPUT -i ${vnt_tunname} -j ACCEPT
    [ "$vnt_proxy_enable" = "1" ] && echo 1 > /proc/sys/net/ipv4/ip_forward
-   [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep 'vnt')\" && /bin/sh /koolshare/scripts/vnt_config.sh restartvnt"
+   [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep '$vnt_tunname')\" && /bin/sh /koolshare/scripts/vnt_config.sh restartvnt"
+   if [ "$vnt_udp_mode" = "tcp" ] ; then
+    #tcp直连需要放行端口，也就是客户端监听端口第一个，如果没有指定端口默认是随机的，所以放行所有tcp端口出去
+      iptables -I OUTPUT -p tcp -j ACCEPT
+      ip6tables -I OUTPUT -p tcp -j ACCEPT
+      [ -z "$(cru l | grep vnt_rules2)" ] && cru a vnt_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp -j ACCEPT || iptables -I OUTPUT -p tcp -j ACCEPT ; ip6tables -C OUTPUT -p tcp -j ACCEPT || ip6tables -I OUTPUT -p tcp -j ACCEPT"
+   fi
 }
 
 fun_start_vnts(){
@@ -721,12 +738,12 @@ clearvntslog)
 	http_response "$1"
     ;;
 updatevnt)
-        fun_updatevnt
 	http_response "$1"
+        fun_updatevnt
     ;;
 updatevnts)
-        fun_updatevnts
 	http_response "$1"
+        fun_updatevnts
     ;;
 restartvnt)
        if [ "${vnt_enable}" != "1" ] ; then
@@ -734,8 +751,8 @@ restartvnt)
    http_response "$1"
    exit 
 fi
-	fun_start_vnt
 	http_response "$1"
+	fun_start_vnt
     ;;
 restartvnts)
 	if [ "${vnts_enable}" != "1" ] ; then
@@ -743,7 +760,7 @@ restartvnts)
    http_response "$1"
    exit 
 fi
-	fun_start_vnts
 	http_response "$1"
+	fun_start_vnts
     ;;
 esac
