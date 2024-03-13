@@ -1214,9 +1214,7 @@ function get_installog(s) {
                                         <tr>
 					<th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(26)">连接模式</a></th>
 					<td>
-					<select id="vnt_relay_enable" name="vnt_relay_enable"
-					style="width:165px;margin:0px 0px 0px 2px;" value="all"
-					class="input_option">
+					<select id="vnt_relay_enable" name="vnt_relay_enable" style="width:165px;margin:0px 0px 0px 2px;" value="all" class="input_option">
 					<option value="all">自动</option>
 					<option value="relay">转发</option>
 					<option value="p2p">P2P</option>
@@ -1228,7 +1226,7 @@ function get_installog(s) {
                                             <td>
                                                 <select id="vnt_ipv4_mode" name="vnt_ipv4_mode" style="width:165px;margin:0px 0px 0px 2px;" value="auto" class="input_option" >
                                                     <option value="auto">V4-V6都使用</option>
-													<option value="ipv4">只使用IPV4</option>
+						    <option value="ipv4">只使用IPV4</option>
                                                     <option value="ipv6">只使用IPV6</option>
                                                 </select>
                                             </td>
@@ -1236,7 +1234,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(15)">监听端口</a></th>
                                             <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, ''); if(value>65535)value=65535" class="input_ss_table" id="vnt_port" name="vnt_port" maxlength="6" value="" placeholder="" />
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, ''); if(value>65535)value=65535" class="input_ss_table" id="vnt_port" name="vnt_port" maxlength="6" value="" placeholder="0,0" />
                                             </td>
                                         </tr>
                                         <tr>
