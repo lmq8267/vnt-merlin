@@ -119,8 +119,8 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway"]
-var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_relay_enable","vnt_first_latency_enable","vnt_mn_enable","vnts_finger_enable"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name"]
+var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable"]
 function initial() {
 	show_menu(menu_hook);
 	get_dbus_data();
@@ -230,28 +230,12 @@ function buildswitch() {
 			document.form.vnt_finger_enable.value = 0;
 		}
 	});
-	$("#vnt_relay_enable").click(
-	function() {
-		if (E('vnt_relay_enable').checked) {
-			document.form.vnt_relay_enable.value = 1;
-		} else {
-			document.form.vnt_relay_enable.value = 0;
-		}
-	});
 	$("#vnt_first_latency_enable").click(
 	function() {
 		if (E('vnt_first_latency_enable').checked) {
 			document.form.vnt_first_latency_enable.value = 1;
 		} else {
 			document.form.vnt_first_latency_enable.value = 0;
-		}
-	});
-	$("#vnt_mn_enable").click(
-	function() {
-		if (E('vnt_mn_enable').checked) {
-			document.form.vnt_mn_enable.value = 1;
-		} else {
-			document.form.vnt_mn_enable.value = 0;
 		}
 	});
 	$("#vnts_finger_enable").click(
@@ -869,7 +853,7 @@ function openssHint(itemNum) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
 	} else if (itemNum == 15) {
-		statusmenu = "指定客户端的端口，默认随机";
+		statusmenu = "指定本地监听的端口组，多个端口使用逗号分隔，多个端口可以分摊流量，增加并发，tcp会监听端口组的第一个端口，用于tcp直连<br>例1：‘--ports 12345,12346,12347’ 表示udp监听12345、12346、12347这三个端口，tcp监听12345端口<br>例2：‘--ports 0,0’ 表示udp监听两个未使用的端口，tcp监听一个未使用的端口";
 		_caption = "客户端打洞端口";
 	} else if (itemNum == 16) {
 		statusmenu = "设置虚拟网卡的mtu值，大多数情况下（留空）使用默认值效率会更高，也可根据实际情况进行微调，默认值：不加密1450，加密1410 ";
@@ -902,14 +886,14 @@ function openssHint(itemNum) {
 		statusmenu = "开启数据指纹校验，可增加安全性，如果服务端开启指纹校验，则客户端也必须开启，开启会损耗一部分性能。<br>注意：默认情况下服务端不会对中转的数据做校验，如果要对中转的数据做校验，则需要客户端、服务端都开启此参数";
 		_caption = " 数据指纹校验";
 	} else if (itemNum == 26) {
-		statusmenu = "在网络环境很差时，不使用p2p只使用服务器中继转发效果可能更好（可以配合tcp模式一起使用）";
-		_caption = "禁用P2P直连";
+		statusmenu = "自动:根据当前的网络环境自动选择使用服务器或者客户端进行中继转发还是P2P直连<br>转发:仅中继转发模式，会禁止打洞/p2p直连，只使用服务器转发<br>p2p:仅直连模式，会禁止网络数据从服务器/客户端转发，只会使用服务器转发控制包<br>在网络环境很差时，不使用p2p只使用服务器中继转发效果可能更好（可以配合tcp模式一起使用）";
+		_caption = "连接模式";
 	} else if (itemNum == 27) {
 		statusmenu = "启用后优先使用低延迟通道，默认情况下优先使用p2p通道，某些情况下可能p2p比客户端中继延迟更高，可启用此参数进行优化传输";
 		_caption = "优化传输";
 	} else if (itemNum == 28) {
-		statusmenu = "模拟组播，高频使用组播通信时，可以尝试开启此参数，默认情况下会把组播当作广播发给所有节点。<br>1.默认情况(组播当广播发送)：稳定性好，使用组播频率低时更省流量。<br>2.模拟组播：高频使用组播时防止广播泛洪，客户端和中继服务器会维护组播成员等信息，注意使用此选项时，虚拟网内所有成员都需要开启此选项";
-		_caption = "模拟组播";
+		statusmenu = "指定虚拟网卡名称，默认tun模式使用vnt-tun，tap模式使用vnt-tap<br>多开时需要使用不同的网卡名";
+		_caption = "网卡名称";
 	} else if (itemNum == 29) {
 		statusmenu = "开启vnts服务端选项，更新按钮为在线更新服务端程序版本，重启会同时重启客户端服务端";
 		_caption = "服务端服务说明";
@@ -1212,6 +1196,12 @@ function get_installog(s) {
                                                 </select>
                                             </td>
                                         </tr>
+                                        <tr>
+					<th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(28)">网卡名称</a></th>
+					<td>
+					<input type="text" class="input_ss_table" value="" id="vnt_tun_name" name="vnt_tun_name" value="" placeholder="vnt-tun" />
+					</td>
+					</tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">UDP/TCP</a></th>
                                             <td>
@@ -1221,6 +1211,18 @@ function get_installog(s) {
                                                 </select>
                                             </td>
                                         </tr>
+                                        <tr>
+					<th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(26)">连接模式</a></th>
+					<td>
+					<select id="vnt_relay_enable" name="vnt_relay_enable"
+					style="width:165px;margin:0px 0px 0px 2px;" value="all"
+					class="input_option">
+					<option value="all">自动</option>
+					<option value="relay">转发</option>
+					<option value="p2p">P2P</option>
+					</select>
+					</td>
+					</tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(14)">IPV4/IPV6</a></th>
                                             <td>
@@ -1329,24 +1331,6 @@ function get_installog(s) {
                                         </tr>
 										<tr>
                                             <th>
-                                                <label><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(26)">禁用P2P</a></label>
-                                            </th>
-                                            <td colspan="2">
-                                                <div class="switch_field" style="display:table-cell;float: left;">
-                                                    <label for="vnt_relay_enable">
-                                                        <input id="vnt_relay_enable" class="switch" type="checkbox" style="display: none;">
-                                                        <div class="switch_container" >
-                                                            <div class="switch_bar"></div>
-                                                            <div class="switch_circle transition_style">
-                                                                <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-										<tr>
-                                            <th>
                                                 <label><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(27)">开启优化传输</a></label>
                                             </th>
                                             <td colspan="2">
@@ -1357,24 +1341,6 @@ function get_installog(s) {
                                                             <div class="switch_bar"></div>
                                                             <div class="switch_circle transition_style">
                                                                 <div></div>
-                                                            </div>
-                                                        </div>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-										<tr>
-                                            <th>
-                                                <label><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(28)">开启模拟组播</a></label>
-                                            </th>
-                                            <td colspan="2">
-                                                <div class="switch_field" style="display:table-cell;float: left;">
-                                                    <label for="vnt_mn_enable">
-                                                        <input id="vnt_mn_enable" class="switch" type="checkbox" style="display: none;">
-                                                        <div class="switch_container" >
-                                                            <div class="switch_bar"></div>
-                                                            <div class="switch_circle transition_style">
-                                                               
                                                             </div>
                                                         </div>
                                                     </label>
@@ -1519,7 +1485,7 @@ function get_installog(s) {
     <i>* 注意事项：</i> 请先仔细查阅程序使用文档<br/><br/>
     1、客户端的<i>token</i>为必填项，没有服务器也可单独使用客户端，已内置公共服务器<br/>
     2、<i>点击</i>参数标题的<i>文字</i>，可<i>查看帮助</i>信息。<br/>
-	3、若启动失败，请查看<i>系统记录</i>，有报错提示，或者通过SSH命令行启动测试。<br/>
+	3、若启动失败，请查看请查看程序运行日志，有报错提示，或者通过SSH命令行启动测试。<br/>
 	4、插件会自动下载二进制程序，也可以手动上传程序。<br/>
 </div>
                                     <div id="vnts_log"  class="contentM_qis" style="box-shadow: 3px 3px 10px #000;margin-top: 70px;">
