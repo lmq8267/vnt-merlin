@@ -710,7 +710,7 @@ vinfo)
 	http_response "$1"
     ;;
 all)
-        vnt_all &
+        vnt_all 
 	http_response "$1"
     ;;
 list)
