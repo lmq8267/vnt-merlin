@@ -150,12 +150,31 @@ onkillvnt(){
     rm -f /var/run/vnt-cli.pid
     [ -n "$(cru l | grep vnt_rules)" ] && cru d vnt_rules
     [ -n "$(cru l | grep vnt_rules2)" ] && cru d vnt_rules2
-   iptables -D INPUT -i vnt-tun -j ACCEPT 2>/dev/null
-   iptables -D FORWARD -i vnt-tun -o vnt-tun -j ACCEPT 2>/dev/null
-   iptables -D FORWARD -i vnt-tun -j ACCEPT 2>/dev/null
-   iptables -t nat -D POSTROUTING -o vnt-tun -j MASQUERADE 2>/dev/null
+    [ -n "$(cru l | grep vnt_rules3)" ] && cru d vnt_rules3
+    if [ ! -z "$vnt_tun_name" ] ; then
+       vnt_tunname="${vnt_tun_name}"
+    else
+       if [ "$vnt_tun_mode" = "tap" ] ; then
+          vnt_tunname="vnt-tap"
+       else
+          vnt_tunname="vnt-tun"
+       fi
+    fi
+   iptables -D INPUT -i ${vnt_tunname} -j ACCEPT 2>/dev/null
+   iptables -D FORWARD -i ${vnt_tunname} -o ${vnt_tunname} -j ACCEPT 2>/dev/null
+   iptables -D FORWARD -i ${vnt_tunname} -j ACCEPT 2>/dev/null
+   iptables -t nat -D POSTROUTING -o ${vnt_tunname} -j MASQUERADE 2>/dev/null
    iptables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
    ip6tables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
+    if [ ! -z "$vnt_port" ] ; then
+         if [ ! -z "$(echo $vnt_port | grep ',' )" ] ; then
+	     vnt_tcp_port="${vnt_port%%,*}"
+	 else
+             vnt_tcp_port="$vnt_port"
+         fi
+	 iptables -D INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT 2>/dev/null
+         ip6tables -D INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT 2>/dev/null
+    fi
 }
 onkillvnts(){
     PIDS=$(pidof vnts)
@@ -430,6 +449,17 @@ EOF
       iptables -I OUTPUT -p tcp -j ACCEPT
       ip6tables -I OUTPUT -p tcp -j ACCEPT
       [ -z "$(cru l | grep vnt_rules2)" ] && cru a vnt_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp -j ACCEPT || iptables -I OUTPUT -p tcp -j ACCEPT ; ip6tables -C OUTPUT -p tcp -j ACCEPT || ip6tables -I OUTPUT -p tcp -j ACCEPT"
+      #进来的端口就不能放行所有，想要tcp直连那就只能指定客户端监听端口，放行这个端口进来
+      if [ ! -z "$vnt_port" ] ; then
+         if [ ! -z "$(echo $vnt_port | grep ',' )" ] ; then
+	     vnt_tcp_port="${vnt_port%%,*}"
+	 else
+             vnt_tcp_port="$vnt_port"
+         fi
+	 iptables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT
+         ip6tables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT
+	 [ -z "$(cru l | grep vnt_rules3)" ] && cru a vnt_rules3 "*/2 * * * * iptables -C INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT ; ip6tables -C INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT"
+      fi
    fi
 }
 
