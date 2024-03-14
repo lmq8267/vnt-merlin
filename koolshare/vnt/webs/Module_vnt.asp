@@ -361,7 +361,10 @@ function get_vnt_log() {
             if (res.length == 0){
             E("vnt_logtxt").value = "日志文件为空或程序未启动"; 
             get_vnt_log();
-			}else{ $('#vnt_logtxt').val(res); }
+			}else{ $('#vnt_logtxt').val(res); 
+                      var textarea = document.getElementById('vnt_logtxt');
+                      textarea.scrollTop = textarea.scrollHeight;
+                    }
 		}
 	});
 }
@@ -510,7 +513,10 @@ function get_vnts_log() {
             if (res.length == 0){
             E("vnts_logtxt").value = "日志文件为空或程序未启动"; 
             get_vnts_log();
-			}else{ $('#vnts_logtxt').val(res); }
+			}else{ $('#vnts_logtxt').val(res); 
+                      var textarea = document.getElementById('vnts_logtxt');
+                      textarea.scrollTop = textarea.scrollHeight;
+                  }
 		}
 	});
 }
