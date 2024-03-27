@@ -116,10 +116,28 @@ input[type=button]:focus {
 .vnt_custom_btn:hover {
     background: linear-gradient(to bottom, #27c9c9 0%, #279fd9 100%);
 }
+.web_btn {
+    border: 1px solid #222;
+    background: linear-gradient(to bottom, #003333  0%, #000000 100%); /* W3C */
+    font-size:10pt;
+    color: #fff;
+    padding: 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    width:auto;
+}
+.web_btn:hover {
+    border: 1px solid #222;
+    background: linear-gradient(to bottom, #27c9c9  0%, #279fd9 100%); /* W3C */
+    font-size:10pt;
+    color: #fff;
+    padding: 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    width:auto;
+}
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable"]
 var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable"]
 function initial() {
 	show_menu(menu_hook);
@@ -247,9 +265,18 @@ function buildswitch() {
 		}
 	});
 }
+function openWebInterface() {
+    var web_port = document.getElementById('vnts_web_port').value;
+    var webUiHref = "http://" + window.location.hostname + ":" + web_port;
+    window.open(webUiHref, '_blank');
+}
 function save() {
 		if (trim(E("vnt_enable").value) == "1" && trim(E("vnt_token").value) == "") {
 			alert("客户端token未填写!");
+			return false;
+		}
+                if (trim(E("vnts_enable").value) == "1" && trim(E("vnts_web_enable").value) == "1" && trim(E("vnts_web_port").value) == "") {
+			alert("服务端WEB管理端口未填写!");
 			return false;
 		}
 		if (trim(E("vnt_cron_time").value) == "") {
@@ -282,6 +309,11 @@ function save() {
 		}
 	         if(E("vnt_passmode").value == "off"){
             E("vnt_key").value = "";
+		}
+                if(E("vnts_web_enable").value == "0"){
+            E("vnts_web_port").value = "";
+            E("vnts_web_user").value = "";
+            E("vnts_web_pass").value = "";
 		}
 	showLoading(3);
 
@@ -641,19 +673,47 @@ function toggle_func() {
 		    E("vnt_keys").style.display = "";
 		}
 	});
+
+        $("#vnts_web_enable").change(
+		function(){
+                var webButton = document.querySelector('.web_btn');
+		if(E("vnts_web_enable").value == "1"){
+			E("vnts_webport").style.display = "";
+                        E("vnts_webuser").style.display = "";
+                        E("vnts_webpass").style.display = "";
+                        webButton.style.display = 'block'; 
+		}else{
+		        E("vnts_webport").style.display = "none";
+                        E("vnts_webuser").style.display = "none";
+                        E("vnts_webpass").style.display = "none";
+                        webButton.style.display = 'none';
+		}
+	});
 }
 
 //网页重载时更新显示样式
 function update_visibility(){
+        var webButton = document.querySelector('.web_btn');
 	if( db_vnt["vnt_ipmode"] == "static"){
 	    E("static_ip").style.display = "";
 	}else{
         E("static_ip").style.display = "none";
-    }
+        }
 	if(db_vnt["vnt_passmode"] == "off"){
 	    E("vnt_keys").style.display = "none";
 	}else{
-		E("vnt_keys").style.display = "";
+	    E("vnt_keys").style.display = "";
+	}
+        if(db_vnt["vnts_web_enable"] == "0"){
+	    E("vnts_webport").style.display = "none";
+            webButton.style.display = 'none'; 
+            E("vnts_webuser").style.display = "none";
+            E("vnts_webpass").style.display = "none";
+	}else{
+	    E("vnts_webport").style.display = "";
+            webButton.style.display = 'block'; 
+            E("vnts_webuser").style.display = "";
+            E("vnts_webpass").style.display = "";
 	}
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -921,6 +981,18 @@ function openssHint(itemNum) {
 	} else if (itemNum == 35) {
 		statusmenu = "这里可以上传以<font color='#F46'>.tar.gz</font>结尾的程序压缩包会自动解压<br>也可以上传<font color='#F46'>vnt-cli</font> 或 <font color='#F46'>vnts</font> 二进制程序文件<br>已有的程序将会被替换<br>客户端程序文件名请包含<font color='#F46'>vnt-cli</font>  服务端文件名请包含<font color='#F46'>vnts</font>";
 		_caption = "上传程序选择文件";
+	} else if (itemNum == 36) {
+		statusmenu = "启用服务端的WEB界面，图形化显示所有客户端信息";
+		_caption = "WEB管理界面";
+	} else if (itemNum == 37) {
+		statusmenu = "设定WEB管理界面的访问端口，不能与服务端的监听端口相同！";
+		_caption = "WEB管理界面端口";
+	} else if (itemNum == 38) {
+		statusmenu = "WEB管理界面登录的用户名，不设置默认为admin";
+		_caption = "WEB管理界面用户名";
+	} else if (itemNum == 39) {
+		statusmenu = "WEB管理界面登录的密码，不设置默认为admin";
+		_caption = "WEB管理界面密码";
 	} 
 
 	return overlib(statusmenu, OFFSETX, -160, LEFT, STICKY, WIDTH, 'width', CAPTION, _caption, CLOSETITLE, '');
@@ -1376,7 +1448,8 @@ function get_installog(s) {
                                                         </div>
                                                     </label>
                                                 </div>
-                                                <div> <button id="vnts_action_btn" class="vnt_custom_btn"></button></div>
+                                                <a> <button id="vnts_action_btn" class="vnt_custom_btn"></button></a>
+                                                <a type="button" class="web_btn" style="cursor:pointer; display: none;padding-top:2px;margin-left:6px;margin-top:0px;float: right; position: relative; right: 60%;" href="javascript:void(0);" onclick="openWebInterface()">WEB界面</a>
                                             </td>
                                         </tr>
                                         <tr id="vnts_status">
@@ -1438,6 +1511,33 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(21)">自定义程序路径</a></th>
                                             <td>
                                                 <input type="text"  class="input_ss_table" id="vnts_path" name="vnts_path" maxlength="500" value="" placeholder=" "/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(36)">启用WEB管理界面</a></th>
+                                            <td>
+                                                <select id="vnts_web_enable" name="vnts_web_enable" style="width:165px;margin:0px 0px 0px 2px;" value="0" class="input_option" >
+                                                    <option value="0">关闭</option>
+                                                    <option value="1">启用</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr id="vnts_webport" style="display: none;">
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(37)">WEB管理端口</a></th>
+                                            <td>
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, ''); if(value>65535)value=65535" class="input_ss_table" id="vnts_web_port" name="vnts_web_port" maxlength="6" value="" placeholder="29870" />
+                                            </td>
+                                        </tr>
+                                         <tr id="vnts_webuser" style="display: none;">
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(38)">用户名</a></th>
+                                            <td>
+                                                <input type="password" name="vnts_web_user" id="vnts_web_user" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="admin" />
+                                            </td>
+                                        </tr>
+                                         <tr id="vnts_webpass" style="display: none;">
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(39)">密码</a></th>
+                                            <td>
+                                                <input type="password" name="vnts_web_pass" id="vnts_web_pass" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="admin" />
                                             </td>
                                         </tr>
                                          <tr>
