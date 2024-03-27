@@ -2,6 +2,7 @@
 
 source /jffs/softcenter/scripts/base.sh
 eval `dbus export vnt_`
+eval `dbus export vnts_`
 mkdir -p /tmp/upload
 mkdir -p /home/root/log
 touch /home/root/log/vnt-cli.log
@@ -47,6 +48,10 @@ vnt_path=`dbus get vnt_path`
 vnts_path=`dbus get vnts_path`
 vnts_mask=`dbus get vnts_mask`
 vnts_gateway=`dbus get vnts_gateway`
+vnts_web=`dbus get vnts_web_enable`
+vnts_web_port=`dbus get vnts_web_port`
+vnts_web_pass=`dbus get vnts_web_pass`
+vnts_web_user=`dbus get vnts_web_user`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
 if [ -z "$vnt_path" ] ; then
    JFFS_AVAIL=$(df | grep -w "/jffs$" | awk '{print $4}')
@@ -147,7 +152,6 @@ onkillvnt(){
 		kill -9 "${PID}" >/dev/null 2>&1
                 killall vnt-cli >/dev/null 2>&1
     fi
-    rm -f /var/run/vnt-cli.pid
     [ -n "$(cru l | grep vnt_rules)" ] && cru d vnt_rules
     [ -n "$(cru l | grep vnt_rules2)" ] && cru d vnt_rules2
     [ -n "$(cru l | grep vnt_rules3)" ] && cru d vnt_rules3
@@ -180,12 +184,12 @@ onkillvnts(){
     PIDS=$(pidof vnts)
     [ -n "$(cru l | grep vnts_monitor)" ] && cru d vnts_monitor
     if [ -n "${PIDS}" ];then
-		start-stop-daemon -K -p /var/run/vnts.pid >/dev/null 2>&1
 		kill -9 "${PIDS}" >/dev/null 2>&1
     fi
-    rm -f /var/run/vnts.pid
+    killall -9 vnts 2>/dev/null
     [ -n "$(cru l | grep vnts_rules)" ] && cru d vnts_rules 
     [ -n "$(cru l | grep vnts_rules2)" ] && cru d vnts_rules2
+    [ -n "$(cru l | grep vnts_rules3)" ] && cru d vnts_rules3
     iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     iptables -D INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
@@ -194,6 +198,12 @@ onkillvnts(){
     iptables -D OUTPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
+    if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
+      iptables -D INPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+      ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
+      iptables -D OUTPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+      ip6tables -D OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
+   fi
 } 
 # 停止并清理
 onstop(){
@@ -291,7 +301,15 @@ if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
      logg "未知cpu架构，无法下载..." "vnts" 
    ;;
    esac
+    curl -L -k -o /tmp/static.tar.gz --connect-timeout 10 --retry 3 "${proxy_url}https://github.com/lmq8267/vnts/releases/download/${tag}/WEB_static.tar.gz" || curl -L -k -o /tmp/static.tar.gz --connect-timeout 10 --retry 3 "${proxy_url2}https://github.com/lmq8267/vnts/releases/download/${tag}/WEB_static.tar.gz"
     chmod 755  /tmp/vnts
+    if [ -f /tmp/static.tar.gz ] ; then
+       rm -rf /tmp/static
+       tar -xzvf /tmp/static.tar.gz -C /tmp
+       [ ! -z "$vnts_path" ] && web_path=$(dirname "$vnts_path")
+       [ ! -z "$web_path" ] && mv -f /tmp/static ${web_path}/static
+       rm -rf /tmp/static.tar.gz
+    fi
    if  [ $(($( /tmp/vnts -h | wc -l))) -lt 3 ] ; then
      logg "下载失败，无法更新..." "vnts"
    else
@@ -490,6 +508,13 @@ fun_start_vnts(){
          vntscmd="$vntscmd --white-token $vnts_token "
        fi
     fi
+    if [ "$vnts_web" = 1 ] ; then
+       [ ! -z "$vnts_web_port" ] && vntscmd="$vntscmd --web-port $vnts_web_port "
+       [ ! -z "$vnts_web_user" ] && vntscmd="$vntscmd --username $vnts_web_user "
+       [ ! -z "$vnts_web_pass" ] && vntscmd="$vntscmd --password $vnts_web_pass "
+     else
+       vntscmd="$vntscmd --web-port 0 "
+    fi
     dbus set vnt_startcmds="$vnts_path $vntscmd"
     log_path="$(dirname $vnts_path)"
     mkdir -p ${log_path}/log
@@ -523,9 +548,8 @@ EOF
     fi
     logg "当前服务端启动参数 ${vnts_path} ${vntscmd} " "vnts"
     cd $(dirname $vnts_path)
-    killall vnts 2>/dev/null
-    rm -rf /var/run/vnts.pid
-    start-stop-daemon --start --quiet --make-pidfile --pidfile /var/run/vnts.pid --background --startas /bin/sh -- -c  "${vnts_path} ${vntscmd} >>/home/root/log/vnts.log 2>&1 &"
+    killall -9 vnts 2>/dev/null
+    ./vnts ${vntscmd} >>/home/root/log/vnts.log 2>&1 &
    sleep 5
    [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端启动成功！" "vnts"
    echo `date +%s` > /tmp/vnts_time
@@ -542,6 +566,15 @@ EOF
    fi
    if [ -z "$(cru l | grep vnts_rules2)" ] && [ ! -z "$vnts_port" ] ; then
       cru a vnts_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT"
+   fi
+   if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
+     iptables -I INPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+     ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
+     iptables -I OUTPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+     ip6tables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
+     if [ -z "$(cru l | grep vnts_rules3)" ] ; then
+        cru a vnts_rules3 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT ; iptables -C INPUT -p tcp --dport $vnts_web_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT ; ip6tables -C INPUT -p tcp --dport $vnts_web_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT"
+     fi
    fi
 }
 
