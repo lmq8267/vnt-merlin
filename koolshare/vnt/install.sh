@@ -2,6 +2,7 @@
 
 source /koolshare/scripts/base.sh
 eval `dbus export vnt_`
+eval `dbus export vnts_`
 alias echo_date='echo 【$(TZ=UTC-8 date -R +%Y年%m月%d日\ %X)】:'
 
 DIR=$(cd $(dirname $0); pwd)
