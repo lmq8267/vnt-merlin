@@ -982,6 +982,18 @@ function openssHint(itemNum) {
 	} else if (itemNum == 35) {
 		statusmenu = "这里可以上传以<font color='#F46'>.tar.gz</font>结尾的程序压缩包会自动解压<br>也可以上传<font color='#F46'>vnt-cli</font> 或 <font color='#F46'>vnts</font> 二进制程序文件<br>已有的程序将会被替换<br>客户端程序文件名请包含<font color='#F46'>vnt-cli</font>  服务端文件名请包含<font color='#F46'>vnts</font>";
 		_caption = "上传程序选择文件";
+	} else if (itemNum == 36) {
+		statusmenu = "启用服务端的WEB界面，图形化显示所有客户端信息";
+		_caption = "WEB管理界面";
+	} else if (itemNum == 37) {
+		statusmenu = "设定WEB管理界面的访问端口，不能与服务端的监听端口相同！";
+		_caption = "WEB管理界面端口";
+	} else if (itemNum == 38) {
+		statusmenu = "WEB管理界面登录的用户名，不设置默认为admin";
+		_caption = "WEB管理界面用户名";
+	} else if (itemNum == 39) {
+		statusmenu = "WEB管理界面登录的密码，不设置默认为admin";
+		_caption = "WEB管理界面密码";
 	} 
 
 	return overlib(statusmenu, OFFSETX, -160, LEFT, STICKY, WIDTH, 'width', CAPTION, _caption, CLOSETITLE, '');
@@ -1504,7 +1516,7 @@ function get_installog(s) {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(6)">启用WEB管理界面</a></th>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(36)">启用WEB管理界面</a></th>
                                             <td>
                                                 <select id="vnts_web_enable" name="vnts_web_enable" style="width:165px;margin:0px 0px 0px 2px;" value="0" class="input_option" >
                                                     <option value="0">关闭</option>
@@ -1513,19 +1525,19 @@ function get_installog(s) {
                                             </td>
                                         </tr>
                                         <tr id="vnts_webport" style="display: none;">
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(32)">WEB管理端口</a></th>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(37)">WEB管理端口</a></th>
                                             <td>
                                         <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, ''); if(value>65535)value=65535" class="input_ss_table" id="vnts_web_port" name="vnts_web_port" maxlength="6" value="" placeholder="29870" />
                                             </td>
                                         </tr>
                                          <tr id="vnts_webuser" style="display: none;">
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(3)">用户名</a></th>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(38)">用户名</a></th>
                                             <td>
                                                 <input type="password" name="vnts_web_user" id="vnts_web_user" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="admin" />
                                             </td>
                                         </tr>
                                          <tr id="vnts_webpass" style="display: none;">
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(3)">密码</a></th>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(39)">密码</a></th>
                                             <td>
                                                 <input type="password" name="vnts_web_pass" id="vnts_web_pass" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="admin" />
                                             </td>
