@@ -3,6 +3,7 @@
 export KSROOT=/koolshare
 source $KSROOT/scripts/base.sh
 eval `dbus export vnt_`
+eval `dbus export vnts_`
 en=`dbus get vnt_enable`
 en2=`dbus get vnts_enable`
 if [ "${en}"x = "1"x ] || [ "${en2}"x = "1"x ] ; then
