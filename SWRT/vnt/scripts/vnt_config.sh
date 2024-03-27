@@ -512,6 +512,8 @@ fun_start_vnts(){
        [ ! -z "$vnts_web_port" ] && vntscmd="$vntscmd --web-port $vnts_web_port "
        [ ! -z "$vnts_web_user" ] && vntscmd="$vntscmd --username $vnts_web_user "
        [ ! -z "$vnts_web_pass" ] && vntscmd="$vntscmd --password $vnts_web_pass "
+       web_file="$(dirname $vnts_path)/static/index.html"
+       [ ! -f "$web_file" ] && logg "未找到web静态文件${web_file} , 请下载static文件上传才能访问web管理界面！" "vnts" 
      else
        vntscmd="$vntscmd --web-port 0 "
     fi
