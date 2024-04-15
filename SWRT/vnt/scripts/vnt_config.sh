@@ -461,7 +461,7 @@ EOF
    iptables -I FORWARD -i ${vnt_tunname} -j ACCEPT
    iptables -I INPUT -i ${vnt_tunname} -j ACCEPT
    [ "$vnt_proxy_enable" = "1" ] && echo 1 > /proc/sys/net/ipv4/ip_forward
-   [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep '$vnt_tunname')\" && /bin/sh /koolshare/scripts/vnt_config.sh restartvnt"
+   [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep '$vnt_tunname')\" && /bin/sh /jffs/softcenter/scripts/vnt_config.sh restartvnt"
    if [ "$vnt_udp_mode" = "tcp" ] ; then
     #tcp直连需要放行端口，也就是客户端监听端口第一个，如果没有指定端口默认是随机的，所以放行所有tcp端口出去
       iptables -I OUTPUT -p tcp -j ACCEPT
