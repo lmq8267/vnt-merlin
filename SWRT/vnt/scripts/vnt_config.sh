@@ -332,7 +332,7 @@ fun_start_vnt(){
     fun_nat_start
     [ ! -f "${vnt_path}" ] && fun_updatevnt
     [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
-    [ $(($( ${vnt_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt && fun_start_vnts
+    [ $(($( ${vnt_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt && fun_start_vnt
     vntcmd=""
     vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
     dbus set vntcli_version=$vntcli_ver
