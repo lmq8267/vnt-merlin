@@ -1,5 +1,13 @@
 # vnt-梅林版离线安装包
-
+<p align="center">
+<a href="https://github.com/lmq8267/vnt-merlin/releases"><img src="https://img.shields.io/github/downloads/lmq8267/vnt-merlin/total">
+<a href="https://github.com/lmq8267/vnt-merlin/graphs/contributors"><img src="https://img.shields.io/github/contributors-anon/lmq8267/vnt-merlin">
+<a href="https://github.com/lmq8267/vnt-merlin/releases/"><img src="https://img.shields.io/github/release/lmq8267/vnt-merlin">
+<a href="https://github.com/lmq8267/vnt-merlin/issues"><img src="https://img.shields.io/github/issues-raw/lmq8267/vnt-merlin">
+<a href="https://github.com/lmq8267/vnt-merlin/discussions"><img src="https://img.shields.io/github/discussions/lmq8267/vnt-merlin">
+<a href="GitHub repo size"><img src="https://img.shields.io/github/repo-size/lmq8267/vnt-merlin?color=red&style=flat-square">
+<a href="https://github.com/lmq8267/vnt-merlin/actions?query=workflow%3ABuild"><img src="https://img.shields.io/github/actions/workflow/status/lmq8267/vnt-merlin/打包.yml?branch=main" alt="Build status">
+</p>
 
 项目地址：https://github.com/lbl8603/vnt
 
