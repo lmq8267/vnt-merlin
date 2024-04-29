@@ -105,6 +105,8 @@ logg () {
 fun_nat_start(){
     if [ "${vnt_enable}"x = "1"x ] || [ "${vnts_enable}"x = "1"x ];then
 	    [ ! -L "/koolshare/init.d/S49vnt.sh" ] && ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/S49vnt.sh
+            #[ ! -L "/koolshare/init.d/N49vnt.sh" ] && ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/N49vnt.sh
+	    #如果开机自启失败，试着去掉上方代码前的 # 号
     fi
 }
 # 定时任务
@@ -351,7 +353,7 @@ appenders:
     path: /home/root/log/vnt-cli.log
     append: true
     encoder:
-      pattern: "{d} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
@@ -530,7 +532,7 @@ appenders:
     path: /home/root/log/vnts.log
     append: true
     encoder:
-      pattern: "{d} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
