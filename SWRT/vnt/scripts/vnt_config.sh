@@ -105,6 +105,8 @@ logg () {
 fun_nat_start(){
     if [ "${vnt_enable}"x = "1"x ] || [ "${vnts_enable}"x = "1"x ];then
 	    [ ! -L "/jffs/softcenter/init.d/S99vnt.sh" ] && ln -sf /jffs/softcenter/scripts/vnt_config.sh /jffs/softcenter/init.d/S99vnt.sh
+            #[ ! -L "/jffs/softcenter/init.d/N29vnt.sh" ] && ln -sf /jffs/softcenter/scripts/vnt_config.sh /jffs/softcenter/init.d/N29vnt.sh
+	    #如果出现开机不自启，尝试去掉上方代码前的 # 号试试
     fi
 }
 # 定时任务
@@ -351,7 +353,7 @@ appenders:
     path: /home/root/log/vnt-cli.log
     append: true
     encoder:
-      pattern: "{d} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
@@ -530,7 +532,7 @@ appenders:
     path: /home/root/log/vnts.log
     append: true
     encoder:
-      pattern: "{d} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
