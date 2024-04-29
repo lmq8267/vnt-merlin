@@ -47,7 +47,7 @@ install_tar(){
 	        local JFFS_FREE=$((${JFFS_AVAIL} - ${MODULE_NEEDED}))
 	        vntclidir="$(dbus get vnt_path)"
                 vntsdir="$(dbus get vnts_path)"
-	        if [ "$(nvram get sc_mount)" == "0" ];then
+	        if [ "$(nvram get sc_mount)" != "1" ];then
 		
 			if [ "${JFFS_AVAIL}" -lt "5048" ];then
 				echo_date "======================================================="
