@@ -193,17 +193,17 @@ onkillvnts(){
     [ -n "$(cru l | grep vnts_rules2)" ] && cru d vnts_rules2
     [ -n "$(cru l | grep vnts_rules3)" ] && cru d vnts_rules3
     iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-    iptables -D INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+    iptables -D INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
     iptables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-    iptables -D OUTPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+    iptables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
     if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
-      iptables -D INPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+      iptables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
       ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
-      iptables -D OUTPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+      iptables -D OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
       ip6tables -D OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
    fi
 } 
@@ -558,11 +558,11 @@ EOF
    [ ! -z "$(pidof vnts)" ] && logg "vnts_${vnts_ver}服务端启动成功！" "vnts"
    echo `date +%s` > /tmp/vnts_time
    iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-   iptables -I INPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+   iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I INPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
-   iptables -I OUTPUT -p udp --dport $vnts_port-j ACCEPT 2>/dev/null
+   iptables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
    ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
    if [ -z "$(cru l | grep vnts_rules)" ] && [ ! -z "$vnts_port" ] ; then
@@ -572,9 +572,9 @@ EOF
       cru a vnts_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT"
    fi
    if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
-     iptables -I INPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+     iptables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
      ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
-     iptables -I OUTPUT -p tcp --dport $vnts_web_port-j ACCEPT 2>/dev/null
+     iptables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
      ip6tables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
      if [ -z "$(cru l | grep vnts_rules3)" ] ; then
         cru a vnts_rules3 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT ; iptables -C INPUT -p tcp --dport $vnts_web_port -j ACCEPT || iptables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT ; ip6tables -C INPUT -p tcp --dport $vnts_web_port -j ACCEPT || ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT"
