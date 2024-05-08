@@ -68,12 +68,9 @@ install_tar(){
 		if echo "$vnt_name" | grep -q "vnts"; then
                    vnt_bin_name="vnts"
                    vnt_dir="$vntsdir"
-		   web_path=$(dirname "$vntsdir")
                elif echo "$vnt_name" | grep -q "vnt-cli"; then
                    vnt_bin_name="vnt-cli"
                    vnt_dir="$vntclidir"
-		elif echo "$vnt_name" | grep -q "static"; then
-                   web_path=$(dirname "$vntsdir")
                else
                    echo_date "======================================================="
                    echo_date "检测到上传的程序${vnt_name}没有包含vnt-cli和vnts 无法识别安装！"
@@ -84,7 +81,7 @@ install_tar(){
                 fi
 		if echo $vnt_name | grep -q "\.tar\.gz$"; then
 		   echo_date "尝试解压压缩包"
-		   rm -rf /tmp/vnt-cli /tmp/vnts /tmp/static
+		   rm -rf /tmp/vnt-cli /tmp/vnts
 		   tar -xzvf ${vnt_DIR}/${vnt_name} -C /tmp
 		   if [ $? -eq 0 ]; then
                      echo_date "${vnt_name}解压成功"
@@ -96,7 +93,6 @@ install_tar(){
 		     echo_date "======================================================="
 		     clean 1
                   fi
-		  [ ! -z "$web_path" ] && mv -f /tmp/static ${web_path}/static
                   [ ! -z "$vnt_bin_name" ] && mv /tmp/${vnt_bin_name} $vnt_dir
                 else
                  mv ${vnt_DIR}/${vnt_name} $vnt_dir
