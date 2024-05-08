@@ -52,6 +52,7 @@ vnts_web=`dbus get vnts_web_enable`
 vnts_web_port=`dbus get vnts_web_port`
 vnts_web_pass=`dbus get vnts_web_pass`
 vnts_web_user=`dbus get vnts_web_user`
+vnts_web_wan=`dbus get vnts_web_wan`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
 lanaddr=$(ifconfig br0|grep -Eo "inet addr.+"|awk -F ":| " '{print $3}' 2>/dev/null)
 if [ -z "$vnt_path" ] ; then
@@ -202,7 +203,7 @@ onkillvnts(){
     iptables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
     ip6tables -D OUTPUT -p udp --dport $vnts_port -j ACCEPT 2>/dev/null
-    if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
+    if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] && [ "$vnts_web_wan" = 1 ] ; then
       iptables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
       ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
       iptables -D OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
@@ -564,7 +565,7 @@ EOF
    if [ -z "$(cru l | grep vnts_rules2)" ] && [ ! -z "$vnts_port" ] ; then
       cru a vnts_rules2 "*/2 * * * * iptables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; iptables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || iptables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p tcp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p tcp --dport $vnts_port -j ACCEPT ; ip6tables -C OUTPUT -p udp --dport $vnts_port -j ACCEPT || ip6tables -I OUTPUT -p udp --dport $vnts_port -j ACCEPT"
    fi
-   if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] ; then
+   if [ "$vnts_web" = 1 ] && [ ! -z "$vnts_web_port" ] && [ "$vnts_web_wan" = 1 ] ; then
      iptables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
      ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
      iptables -I OUTPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
