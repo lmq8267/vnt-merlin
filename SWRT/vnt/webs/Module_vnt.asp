@@ -138,7 +138,7 @@ input[type=button]:focus {
 <script>
 var db_vnt = {};
 var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable"]
-var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable"]
+var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
 	get_dbus_data();
@@ -264,6 +264,14 @@ function buildswitch() {
 			document.form.vnts_finger_enable.value = 0;
 		}
 	});
+        $("#vnts_web_wan").click(
+	function() {
+		if (E('vnts_web_wan').checked) {
+			document.form.vnts_web_wan.value = 1;
+		} else {
+			document.form.vnts_web_wan.value = 0;
+		}
+	});
 }
 function openWebInterface() {
     var web_port = document.getElementById('vnts_web_port').value;
@@ -314,6 +322,7 @@ function save() {
             E("vnts_web_port").value = "";
             E("vnts_web_user").value = "";
             E("vnts_web_pass").value = "";
+            E("vnts_web_wan").value = "0";
 		}
 	showLoading(3);
 
@@ -681,11 +690,13 @@ function toggle_func() {
 			E("vnts_webport").style.display = "";
                         E("vnts_webuser").style.display = "";
                         E("vnts_webpass").style.display = "";
+                        E("vnts_webwan").style.display = "";
                         webButton.style.display = 'block'; 
 		}else{
 		        E("vnts_webport").style.display = "none";
                         E("vnts_webuser").style.display = "none";
                         E("vnts_webpass").style.display = "none";
+                        E("vnts_webwan").style.display = "none";
                         webButton.style.display = 'none';
 		}
 	});
@@ -709,11 +720,13 @@ function update_visibility(){
             webButton.style.display = 'none'; 
             E("vnts_webuser").style.display = "none";
             E("vnts_webpass").style.display = "none";
+            E("vnts_webwan").style.display = "none";
 	}else{
 	    E("vnts_webport").style.display = "";
             webButton.style.display = 'block'; 
             E("vnts_webuser").style.display = "";
             E("vnts_webpass").style.display = "";
+            E("vnts_webwan").style.display = "";
 	}
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -919,7 +932,7 @@ function openssHint(itemNum) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
 	} else if (itemNum == 15) {
-		statusmenu = "指定本地监听的端口组，多个端口使用逗号分隔，多个端口可以分摊流量，增加并发，tcp会监听端口组的第一个端口，用于tcp直连<br>例1：‘--ports 12345,12346,12347’ 表示udp监听12345、12346、12347这三个端口，tcp监听12345端口<br>例2：‘--ports 0,0’ 表示udp监听两个未使用的端口，tcp监听一个未使用的端口";
+		statusmenu = "指定本地监听的端口组，多个端口使用逗号分隔，多个端口可以分摊流量，增加并发，tcp会监听端口组的第一个端口，用于tcp直连<br>例1：‘12345,12346,12347’ 表示udp监听12345、12346、12347这三个端口，tcp监听12345端口<br>例2：‘0,0’ 表示udp监听两个未使用的端口，tcp监听一个未使用的端口";
 		_caption = "客户端打洞端口";
 	} else if (itemNum == 16) {
 		statusmenu = "设置虚拟网卡的mtu值，大多数情况下（留空）使用默认值效率会更高，也可根据实际情况进行微调，默认值：不加密1450，加密1410 ";
@@ -993,6 +1006,9 @@ function openssHint(itemNum) {
 	} else if (itemNum == 39) {
 		statusmenu = "WEB管理界面登录的密码，不设置默认为admin";
 		_caption = "WEB管理界面密码";
+	} else if (itemNum == 40) {
+		statusmenu = "开启后在外网将可以访问WEB管理界面，为安全起见，建议设置复杂的用户名和密码，定期更换，避免泄露";
+		_caption = "外网访问WEB";
 	} 
 
 	return overlib(statusmenu, OFFSETX, -160, LEFT, STICKY, WIDTH, 'width', CAPTION, _caption, CLOSETITLE, '');
@@ -1538,6 +1554,24 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(39)">密码</a></th>
                                             <td>
                                                 <input type="password" name="vnts_web_pass" id="vnts_web_pass" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="admin" />
+                                            </td>
+                                        </tr>
+                                         <tr id="vnts_webwan" style="display: none;">
+                                            <th>
+                                                <label><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(40)">允许外网访问WEB</a></label>
+                                            </th>
+                                            <td colspan="2">
+                                                <div class="switch_field" style="display:table-cell;float: left;">
+                                                    <label for="vnts_web_wan">
+                                                        <input id="vnts_web_wan" class="switch" type="checkbox" style="display: none;">
+                                                        <div class="switch_container" >
+                                                            <div class="switch_bar"></div>
+                                                            <div class="switch_circle transition_style">
+                                                                <div></div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </td>
                                         </tr>
                                          <tr>
