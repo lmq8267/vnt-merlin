@@ -53,6 +53,7 @@ vnts_web_port=`dbus get vnts_web_port`
 vnts_web_pass=`dbus get vnts_web_pass`
 vnts_web_user=`dbus get vnts_web_user`
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
+lanaddr=$(ifconfig br0|grep -Eo "inet addr.+"|awk -F ":| " '{print $3}' 2>/dev/null)
 if [ -z "$vnt_path" ] ; then
    JFFS_AVAIL=$(df | grep -w "/jffs$" | awk '{print $4}')
    if [ "${JFFS_AVAIL}" -lt "4096" ];then
@@ -172,6 +173,7 @@ onkillvnt(){
    iptables -t nat -D POSTROUTING -o ${vnt_tunname} -j MASQUERADE 2>/dev/null
    iptables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
    ip6tables -D OUTPUT -p tcp -j ACCEPT 2>/dev/null
+   [ ! -z "$vnt_static_ip" ] && [ ! -z "$lanaddr" ] && iptables -t nat -D PREROUTING -p tcp -d ${nt_static_ip} --dport 80 -j DNAT --to-destination ${lanaddr}:80 2>/dev/null
     if [ ! -z "$vnt_port" ] ; then
          if [ ! -z "$(echo $vnt_port | grep ',' )" ] ; then
 	     vnt_tcp_port="${vnt_port%%,*}"
@@ -454,6 +456,7 @@ EOF
    iptables -I FORWARD -o ${vnt_tunname} -j ACCEPT
    iptables -I FORWARD -i ${vnt_tunname} -j ACCEPT
    iptables -I INPUT -i ${vnt_tunname} -j ACCEPT
+   [ ! -z "$vnt_static_ip" ] && [ ! -z "$lanaddr" ] && iptables -t nat -I PREROUTING -p tcp -d ${nt_static_ip} --dport 80 -j DNAT --to-destination ${lanaddr}:80
    [ "$vnt_proxy_enable" = "1" ] && echo 1 > /proc/sys/net/ipv4/ip_forward
    [ -z "$(cru l | grep vnt_rules)" ] && cru a vnt_rules "*/2 * * * * test -z \"\$(iptables -L -n -v | grep '$vnt_tunname')\" && /bin/sh /jffs/softcenter/scripts/vnt_config.sh restartvnt"
    if [ "$vnt_udp_mode" = "tcp" ] ; then
