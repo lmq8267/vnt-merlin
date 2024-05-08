@@ -303,15 +303,7 @@ if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
      logg "未知cpu架构，无法下载..." "vnts" 
    ;;
    esac
-    curl -L -k -o /tmp/static.tar.gz --connect-timeout 10 --retry 3 "${proxy_url}https://github.com/lmq8267/vnts/releases/download/${tag}/WEB_static.tar.gz" || curl -L -k -o /tmp/static.tar.gz --connect-timeout 10 --retry 3 "${proxy_url2}https://github.com/lmq8267/vnts/releases/download/${tag}/WEB_static.tar.gz"
     chmod 755  /tmp/vnts
-    if [ -f /tmp/static.tar.gz ] ; then
-       rm -rf /tmp/static
-       tar -xzvf /tmp/static.tar.gz -C /tmp
-       [ ! -z "$vnts_path" ] && web_path=$(dirname "$vnts_path")
-       [ ! -z "$web_path" ] && mv -f /tmp/static ${web_path}/static
-       rm -rf /tmp/static.tar.gz
-    fi
    if  [ $(($( /tmp/vnts -h | wc -l))) -lt 3 ] ; then
      logg "下载失败，无法更新..." "vnts"
    else
@@ -514,8 +506,6 @@ fun_start_vnts(){
        [ ! -z "$vnts_web_port" ] && vntscmd="$vntscmd --web-port $vnts_web_port "
        [ ! -z "$vnts_web_user" ] && vntscmd="$vntscmd --username $vnts_web_user "
        [ ! -z "$vnts_web_pass" ] && vntscmd="$vntscmd --password $vnts_web_pass "
-       web_file="$(dirname $vnts_path)/static/index.html"
-       [ ! -f "$web_file" ] && logg "未找到web静态文件${web_file} , 请下载static文件上传才能访问web管理界面！" "vnts" 
      else
        vntscmd="$vntscmd --web-port 0 "
     fi
