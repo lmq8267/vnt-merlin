@@ -24,6 +24,8 @@ vnt_cron_hour_min=`dbus get vnt_cron_hour_min`
 vnts_cron_time=`dbus get vnts_cron_time`
 vnts_cron_hour_min=`dbus get vnts_cron_hour_min`
 vnt_token=`dbus get vnt_token`
+vnt_compressor=`dbus get vnt_compressor`
+vnt_mapping=`dbus get vnt_mapping`
 vnts_token=`dbus get vnts_token`
 vnt_ipmode=`dbus get vnt_ipmode`
 vnt_static_ip=`dbus get vnt_static_ip`
@@ -383,6 +385,7 @@ EOF
     [ "$vnt_passmode" != "off" ] && vntcmd="$vntcmd --model $vnt_passmode "
     [ "$vnt_finger_enable" = "1" ] && vntcmd="$vntcmd --finger "
     [ "$vnt_relay_enable" != "all" ] && vntcmd="$vntcmd --use-channel $vnt_relay_enable "
+    [ "$vnt_compressor" != "off" ] && vntcmd="$vntcmd --compressor $vnt_compressor "
     if [ ! -z "$vnt_tun_name" ] ; then
        vnt_tunname="${vnt_tun_name}"
     else
@@ -439,6 +442,18 @@ EOF
           vntcmd="$vntcmd $stunaddr "
       else
          vntcmd="$vntcmd -e $vnt_stunaddr "
+       fi
+    fi
+    if [ ! -z "$vnt_mapping" ] ; then
+       if echo "$vnt_mapping" | grep -q '|'; then
+          mapping=""
+         for mapval in $(echo $vnt_mapping | awk -F"|" '{for (i=1;i<=NF;i++) print $i}'); do
+          mapping="$mapping --mapping $mapval"
+          done
+          mapping=$mapping
+          vntcmd="$vntcmd $mapping "
+      else
+         vntcmd="$vntcmd --mapping $vnt_mapping "
        fi
     fi
     dbus set vnt_startcmd="$vnt_path $vntcmd"
