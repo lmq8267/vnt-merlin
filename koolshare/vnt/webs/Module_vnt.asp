@@ -137,7 +137,7 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
@@ -945,7 +945,7 @@ function openssHint(itemNum) {
 		statusmenu = "默认留空，任务并行度(必须为正整数),默认值为1,该值表示处理网卡读写的任务数,组网设备数较多、处理延迟较大时可适当调大此值";
 		_caption = " 并行任务数";
 	} else if (itemNum == 19) {
-		statusmenu = "设定客户端之间的加密连接使用的加密模式<br>默认off不加密，通常情况aes_gcm安全性高、aes_ecb性能更好，在低性能设备上aes_ecb速度最快";
+		statusmenu = "设定客户端之间的加密连接使用的加密模式<br>默认off不加密，通常情况aes_gcm安全性高、aes_ecb性能更好，在低性能设备上aes_ecb/chacha20_poly1305/chacha20/xor速度最快<br>注意：xor为数据混淆，并不是一种强大的加密算法，易被破解，因此不适合用于真正的加密需求";
 		_caption = " 加密模式";
 	} else if (itemNum == 20) {
 		statusmenu = "选择加密模式后，填写的加密密钥，启用后所有客户端必须填写一样的密钥才能连接";
@@ -1010,6 +1010,12 @@ function openssHint(itemNum) {
 	} else if (itemNum == 40) {
 		statusmenu = "开启后在外网将可以访问WEB管理界面，为安全起见，建议设置复杂的用户名和密码，定期更换，避免泄露";
 		_caption = "外网访问WEB";
+	} else if (itemNum == 41) {
+		statusmenu = "端口映射,可以设置多个映射地址以<font color='#F46'>|</font>分隔即可，例如<font color='#F46'>udp:0.0.0.0:80->10.26.0.10:80|tcp:0.0.0.0:80->10.26.0.11:81</font><br>表示将本地udp 80端口的数据转发到10.26.0.10:80，将本地tcp 80端口的数据转发到10.26.0.11:81，转发的目的地址可以使用域名+端口";
+		_caption = "端口映射";
+	} else if (itemNum == 42) {
+		statusmenu = "启用压缩，默认仅支持lz4压缩，开启压缩后，如果数据包长度大于等于128，则会使用压缩，否则还是会按原数据发送<br>也支持开启zstd压缩，但是需要自行编译，编译时加入参数--features zstd<br>如果宽度速度比较慢，可以考虑使用高级别的压缩";
+		_caption = "数据压缩";
 	} 
 
 	return overlib(statusmenu, OFFSETX, -160, LEFT, STICKY, WIDTH, 'width', CAPTION, _caption, CLOSETITLE, '');
@@ -1255,31 +1261,31 @@ function get_installog(s) {
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(9)">设备名称</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_desvice_name" name="vnt_desvice_name" value="" placeholder=""/>
+                                                <input type="text" class="input_ss_table" value="" id="vnt_desvice_name" name="vnt_desvice_name" value="" placeholder="KoolShare_梅林"/>
                                             </td>
                                         </tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(10)">本地网段(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
-                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_localadd" name="vnt_localadd"  value="" placeholder=""></textarea>
+                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_localadd" name="vnt_localadd"  value="" placeholder="192.168.50.0/24"></textarea>
                                             </td>
                                         </tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(11)">对端网段(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
-                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_peeradd" name="vnt_peeradd"  value="" placeholder=""></textarea>
+                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_peeradd" name="vnt_peeradd"  value="" placeholder="192.168.123.0/24,10.26.0.123"></textarea>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(1)">服务器地址</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_serveraddr" name="vnt_serveraddr" maxlength="100" value="" placeholder=""/>
+                                                <input type="text" class="input_ss_table" value="" id="vnt_serveraddr" name="vnt_serveraddr" maxlength="100" value="" placeholder="域名:端口"/>
                                             </td>
                                         </tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(2)">STUN服务地址(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
-                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_stunaddr" name="vnt_stunaddr"  value="" placeholder=""></textarea>
+                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_stunaddr" name="vnt_stunaddr"  value="" placeholder="stun.qq.com:3478"></textarea>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1335,13 +1341,13 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(16)">MTU</a></th>
                                             <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="" />
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1450" />
                                             </td>
                                         </tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(18)">并行任务数</a></th>
                                             <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_par" name="vnt_par" value="" placeholder="" />
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_par" name="vnt_par" value="" placeholder="1" />
                                             </td>
                                         </tr>
 										<tr>
@@ -1350,9 +1356,12 @@ function get_installog(s) {
                                                 <select id="vnt_passmode" name="vnt_passmode" style="width:165px;margin:0px 0px 0px 2px;" value="off" class="input_option" >
                                                     <option value="off">不加密</option>
                                                     <option value="aes_ecb">aes_ecb</option>
-													<option value="sm4_cbc">sm4_cbc</option>
-													<option value="aes_cbc">aes_cbc</option>
-													<option value="aes_gcm">aes_gcm</option>
+						    <option value="sm4_cbc">sm4_cbc</option>
+						    <option value="aes_cbc">aes_cbc</option>
+						    <option value="aes_gcm">aes_gcm</option>
+						    <option value="chacha20_poly1305">chacha20_poly1305</option>
+						    <option value="chacha20">chacha20</option>
+						    <option value="xor">xor</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -1362,10 +1371,26 @@ function get_installog(s) {
                                                 <input type="password" name="vnt_key" id="vnt_key" class="input_ss_table" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);" placeholder="" />
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(42)">启用压缩</a></th>
+                                            <td>
+                                                <select id="vnt_compressor" name="vnt_compressor" style="width:165px;margin:0px 0px 0px 2px;" value="off" class="input_option" >
+                                                    <option value="off">关闭</option>
+                                                    <option value="lz4">lz4压缩</option>
+						    <option value="zstd">zstd压缩</option>
+                                                </select>
+                                            </td>
+                                        </tr>
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(21)">自定义程序路径</a></th>
                                             <td>
-                                                <input type="text"  class="input_ss_table" id="vnt_path" name="vnt_path" maxlength="500" value="" placeholder=" "/>
+                                                <input type="text"  class="input_ss_table" id="vnt_path" name="vnt_path" maxlength="500" value="" placeholder="必填，例如/koolshare/bin/vnt-cli"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(41)">端口映射(<i>多个以 | 隔开</i>)</a></th>
+                                            <td>
+                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80->10.26.0.10:80"></textarea>
                                             </td>
                                         </tr>
 										<tr>
@@ -1528,7 +1553,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(21)">自定义程序路径</a></th>
                                             <td>
-                                                <input type="text"  class="input_ss_table" id="vnts_path" name="vnts_path" maxlength="500" value="" placeholder=" "/>
+                                                <input type="text"  class="input_ss_table" id="vnts_path" name="vnts_path" maxlength="500" value="" placeholder="必填，例如/koolshare/bin/vnts"/>
                                             </td>
                                         </tr>
                                         <tr>
