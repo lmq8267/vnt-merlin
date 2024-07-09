@@ -137,7 +137,7 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_tun_mode", "vnt_udp_mode", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
@@ -318,6 +318,9 @@ function save() {
 		}
 	        if(E("vnt_passmode").value == "off"){
             E("vnt_key").value = "";
+		}
+                if(E("vnts_enable").value == "0"){
+            E("vnts_web_enable").value = "0";
 		}
                    if(E("vnts_web_enable").value == "0"){
             E("vnts_web_port").value = "";
@@ -894,7 +897,7 @@ function openssHint(itemNum) {
 		statusmenu = "开启vnt-cli客户端选项,更新按钮为在线更新客户端程序版本，重启会同时重启客户端服务端";
 		_caption = "客户端服务说明";
 	} else if (itemNum == 1) {
-		statusmenu = "需要连接的vnts服务器的IP:端口。留空，默认使用内置的公共服务器 。";
+		statusmenu = "需要连接的vnts服务器的IP:端口。留空，默认使用内置的公共服务器。<br>协议支持使用tcp://和ws://和wss://,默认为udp://";
 		_caption = "vnts服务器地址";
 	} else if (itemNum == 2) {
 		statusmenu = "自定义打洞stun服务器，使用stun服务探测客户端NAT类型，不同类型有不同的打洞策略，已内置谷歌 QQ 可不填<br>多个stun服务器地址，请使用英文|进行分隔";
@@ -912,7 +915,7 @@ function openssHint(itemNum) {
 		statusmenu = "手动指定虚拟IP地址，请输入有效的IP地址，若服务端指定了虚拟网段，则这里的IP地址也要和服务器相同网段";
 		_caption = " 指定虚拟IP地址";
 	} else if (itemNum == 8) {
-		statusmenu = "设定当前设备的硬件ID标识，若设定必须每台客户端的设备ID不能相同！";
+		statusmenu = "设定当前设备的硬件ID标识，注意：每台客户端的设备ID不能相同！";
 		_caption = " 设备ID";
 	} else if (itemNum == 9) {
 		statusmenu = "指定当前设备的名称，方便在虚拟局域网里区分哪个客户端是哪个设备";
@@ -923,12 +926,6 @@ function openssHint(itemNum) {
 	} else if (itemNum == 11) {
 		statusmenu = "指定访问对端局域网设备，如对端lan IP是192.168.4.1 虚拟IP是 10.26.0.4 <br>则填192.168.4.0/24,10.26.0.4 多个网段也使用英文|分隔 <br>例如 192.168.4.0/24,10.26.0.4|192.168.5.0/24,10.26.0.5";
 		_caption = "对端网段";
-	} else if (itemNum == 12) {
-		statusmenu = "默认使用tun网卡，tun网卡效率更高";
-		_caption = "TUN TAP网卡类型";
-	} else if (itemNum == 13) {
-		statusmenu = "有些网络提供商对UDP限制比较大，这个时候可以选择使用TCP模式，提高稳定性。一般来说udp延迟和消耗更低";
-		_caption = "TCP UDP模式";
 	} else if (itemNum == 14) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
@@ -966,7 +963,7 @@ function openssHint(itemNum) {
 		statusmenu = "开启数据指纹校验，可增加安全性，如果服务端开启指纹校验，则客户端也必须开启，开启会损耗一部分性能。<br>注意：默认情况下服务端不会对中转的数据做校验，如果要对中转的数据做校验，则需要客户端、服务端都开启此参数";
 		_caption = " 数据指纹校验";
 	} else if (itemNum == 26) {
-		statusmenu = "自动:根据当前的网络环境自动选择使用服务器或者客户端进行中继转发还是P2P直连<br>转发:仅中继转发模式，会禁止打洞/p2p直连，只使用服务器转发<br>p2p:仅直连模式，会禁止网络数据从服务器/客户端转发，只会使用服务器转发控制包<br>在网络环境很差时，不使用p2p只使用服务器中继转发效果可能更好（可以配合tcp模式一起使用）";
+		statusmenu = "自动:根据当前的网络环境自动选择使用服务器或者客户端进行中继转发还是P2P直连<br>转发:仅中继转发模式，会禁止打洞/p2p直连，只使用服务器转发<br>p2p:仅直连模式，会禁止网络数据从服务器/客户端转发，只会使用服务器转发控制包<br>在网络环境很差时，不使用p2p只使用服务器中继转发效果可能更好（可以配合服务器的tcp协议一起使用）";
 		_caption = "连接模式";
 	} else if (itemNum == 27) {
 		statusmenu = "启用后优先使用低延迟通道，默认情况下优先使用p2p通道，某些情况下可能p2p比客户端中继延迟更高，可启用此参数进行优化传输";
@@ -993,7 +990,7 @@ function openssHint(itemNum) {
 		statusmenu = "设定服务器的子网掩码";
 		_caption = "服务器网络掩码";
 	} else if (itemNum == 35) {
-		statusmenu = "这里可以上传以<font color='#F46'>.tar.gz</font>结尾的程序压缩包会自动解压<br>也可以上传<font color='#F46'>vnt-cli</font> 或 <font color='#F46'>vnts</font> 二进制程序文件<br>已有的程序将会被替换<br>客户端程序文件名请包含<font color='#F46'>vnt-cli</font>  服务端文件名请包含<font color='#F46'>vnts</font>";
+		statusmenu = "这里可以上传以<font color='#F46'>.tar.gz</font>结尾的程序压缩包会自动解压<br>也可以上传<font color='#F46'>vnt-cli</font> 或 <font color='#F46'>vnts</font> 二进制程序文件<br>已有的程序将会被替换<br>客户端程序文件名请包含<font color='#F46'>vnt-cli</font>  服务端文件名请包含<font color='#F46'>vnts</font><br>上传二进制文件的话文件名必须为<font color='#F46'>vnt-cli</font>  服务端名必须为<font color='#F46'>vnts</font>";
 		_caption = "上传程序选择文件";
 	} else if (itemNum == 36) {
 		statusmenu = "启用服务端的WEB界面，图形化显示所有客户端信息";
@@ -1255,7 +1252,7 @@ function get_installog(s) {
 										<tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(8)">设备ID</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_desvice_id" name="vnt_desvice_id" value="" placeholder=""/>
+                                                <input type="text" class="input_ss_table" value="" id="vnt_desvice_id" name="vnt_desvice_id" value="" placeholder="建议和虚拟ip地址填写一致"/>
                                             </td>
                                         </tr>
 										<tr>
@@ -1279,7 +1276,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(1)">服务器地址</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_serveraddr" name="vnt_serveraddr" maxlength="100" value="" placeholder="域名:端口"/>
+                                                <input type="text" class="input_ss_table" value="" id="vnt_serveraddr" name="vnt_serveraddr" maxlength="100" value="" placeholder="tcp://vnt.wherewego.top:29872"/>
                                             </td>
                                         </tr>
 										<tr>
@@ -1288,30 +1285,12 @@ function get_installog(s) {
                                                 <textarea  type="text" class="input_ss_table" value="" id="vnt_stunaddr" name="vnt_stunaddr"  value="" placeholder="stun.qq.com:3478"></textarea>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(12)">TUN/TAP</a></th>
-                                            <td>
-                                                <select id="vnt_tun_mode" name="vnt_tun_mode" style="width:165px;margin:0px 0px 0px 2px;" value="tun" class="input_option" >
-                                                    <option value="tun">TUN网卡</option>
-                                                    <option value="tap">TAP网卡</option>
-                                                </select>
-                                            </td>
-                                        </tr>
 					<tr>
 					<th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(28)">网卡名称</a></th>
 					<td>
 					<input type="text" class="input_ss_table" value="" id="vnt_tun_name" name="vnt_tun_name" value="" placeholder="vnt-tun" />
 					</td>
 					</tr>
-										<tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">UDP/TCP</a></th>
-                                            <td>
-                                                <select id="vnt_udp_mode" name="vnt_udp_mode" style="width:165px;margin:0px 0px 0px 2px;" value="udp" class="input_option" >
-                                                    <option value="udp">UDP模式</option>
-                                                    <option value="tcp">TCP模式</option>
-                                                </select>
-                                            </td>
-                                        </tr>
                                         <tr>
 					<th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(26)">连接模式</a></th>
 					<td>
