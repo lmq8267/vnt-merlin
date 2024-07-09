@@ -35,8 +35,6 @@ vnt_localadd=`dbus get vnt_localadd`
 vnt_peeradd=`dbus get vnt_peeradd`
 vnt_serveraddr=`dbus get vnt_serveraddr`
 vnt_stunaddr=`dbus get vnt_stunaddr`
-vnt_tun_mode=`dbus get vnt_tun_mode`
-vnt_udp_mode=`dbus get vnt_udp_mode`
 vnt_ipv4_mode=`dbus get vnt_ipv4_mode`
 vnt_cron_type=`dbus get vnt_cron_type`
 vnts_cron_type=`dbus get vnts_cron_type`
@@ -164,11 +162,7 @@ onkillvnt(){
     if [ ! -z "$vnt_tun_name" ] ; then
        vnt_tunname="${vnt_tun_name}"
     else
-       if [ "$vnt_tun_mode" = "tap" ] ; then
-          vnt_tunname="vnt-tap"
-       else
-          vnt_tunname="vnt-tun"
-       fi
+       vnt_tunname="vnt-tun"
     fi
    iptables -D INPUT -i ${vnt_tunname} -j ACCEPT 2>/dev/null
    iptables -D FORWARD -i ${vnt_tunname} -o ${vnt_tunname} -j ACCEPT 2>/dev/null
@@ -373,8 +367,6 @@ EOF
     [ ! -z "$vnt_desvice_id" ] && vntcmd="$vntcmd -d $vnt_desvice_id "
     [ ! -z "$vnt_desvice_name" ] && vntcmd="$vntcmd -n $vnt_desvice_name "
     [ ! -z "$vnt_serveraddr" ] && vntcmd="$vntcmd -s $vnt_serveraddr "
-    [ "$vnt_tun_mode" = "tap" ] && vntcmd="$vntcmd -a "
-    [ "$vnt_udp_mode" = "tcp" ] && vntcmd="$vntcmd --tcp "
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
     [ ! -z "$vnt_par" ] && vntcmd="$vntcmd --par $vnt_par "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
@@ -389,11 +381,7 @@ EOF
     if [ ! -z "$vnt_tun_name" ] ; then
        vnt_tunname="${vnt_tun_name}"
     else
-       if [ "$vnt_tun_mode" = "tap" ] ; then
-          vnt_tunname="vnt-tap"
-       else
-          vnt_tunname="vnt-tun"
-       fi
+       vnt_tunname="vnt-tun"
     fi
     [ "$vnt_first_latency_enable" = "1" ] && vntcmd="$vntcmd --first-latency"
     if [ ! -z "$vnt_localadd" ] ; then
@@ -636,6 +624,9 @@ vnt_cmds(){
    [ ! -z "$time" ] && echo "vnt-cli 已运行 $time" >>/tmp/upload/vnt_cmd.log 2>&1
    cmdtart=`dbus get vnt_startcmd`
    [ ! -z "$cmdtart" ] && echo "vnt-cli启动参数  $cmdtart" >>/tmp/upload/vnt_cmd.log 2>&1
+   echo "流量统计：" >>/tmp/upload/vnt_cmd.log 2>&1
+   cd $(dirname $vnt_path)
+   ./vnt-cli --chart_a >>/tmp/upload/vnt_cmd.log 2>&1
 }
 vnts_cmds(){
   vntscpu="$(top -b -n1 | grep -E "$(pidof vnts)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnts/) break; else cpu=i}} END {print $cpu}')"
