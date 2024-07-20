@@ -1,6 +1,11 @@
 name: 打包发布
 on:
   workflow_dispatch:
+    inputs:
+      text:
+        description: '请填写发布的说明'
+        required: false
+        default: ''
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +27,7 @@ jobs:
           cd /opt/src
           if git status --porcelain | grep .; then
           git add .
-          git commit -am "更新时间： $(date '+%Y-%m-%d %H:%M:%S')"
+          git commit -am "${{ github.event.inputs.text }} 更新时间： $(date '+%Y-%m-%d %H:%M:%S')"
           git push --quiet "https://${{ secrets.c8 }}@github.com/lmq8267/vnt-merlin.git"
           else
           echo "没有任何变动，无需上传提交！"
@@ -40,6 +45,8 @@ jobs:
            - **vnt-SWRT.tar.gz**：SWRT梅林的离线安装包
 
            - **vnt-koolshare.tar.gz**：koolshare梅林的离线安装包
+
+           ${{ github.event.inputs.text }}
 
           tag_name: ${{ env.tag }}
           files: |
