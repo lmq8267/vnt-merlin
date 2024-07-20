@@ -138,7 +138,7 @@ input[type=button]:focus {
 <script>
 var db_vnt = {};
 var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
-var params_check = ["vnt_enable","vnts_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
+var params_check = ["vnt_enable","vnts_enable","vnt_wg_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
 	get_dbus_data();
@@ -222,6 +222,14 @@ function buildswitch() {
 			document.form.vnts_enable.value = 1;
 		} else {
 			document.form.vnts_enable.value = 0;
+		}
+	});
+        $("#vnt_wg_enable").click(
+	function() {
+		if (E('vnt_wg_enable').checked) {
+			document.form.vnt_wg_enable.value = 1;
+		} else {
+			document.form.vnt_wg_enable.value = 0;
 		}
 	});
 	$("#vnt_proxy_enable").click(
@@ -926,6 +934,9 @@ function openssHint(itemNum) {
 	} else if (itemNum == 11) {
 		statusmenu = "指定访问对端局域网设备，如对端lan IP是192.168.4.1 虚拟IP是 10.26.0.4 <br>则填192.168.4.0/24,10.26.0.4 多个网段也使用英文|分隔 <br>例如 192.168.4.0/24,10.26.0.4|192.168.5.0/24,10.26.0.5";
 		_caption = "对端网段";
+        } else if (itemNum == 12) {
+		statusmenu = "由于WireGuard是来自vnts转发的，如果vnts不受信任，这将会有安全隐患，所以VNT默认不允许WireGuard流量访问本机";
+		_caption = "接入wireguard客户端";
 	} else if (itemNum == 14) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
@@ -1370,6 +1381,24 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(41)">端口映射(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
                                                 <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80->10.26.0.10:80"></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <label><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(12)">允许接入WireGuard</a></label>
+                                            </th>
+                                            <td colspan="2">
+                                                <div class="switch_field" style="display:table-cell;float: left;">
+                                                    <label for="vnt_wg_enable">
+                                                        <input id="vnt_wg_enable" class="switch" type="checkbox" style="display: none;">
+                                                        <div class="switch_container" >
+                                                            <div class="switch_bar"></div>
+                                                            <div class="switch_circle transition_style">
+                                                                <div></div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </td>
                                         </tr>
 										<tr>
