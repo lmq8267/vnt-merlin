@@ -12,6 +12,7 @@ vnts_log=/home/root/log/vnts.log
 
 vnt_enable=`dbus get vnt_enable`
 vnts_enable=`dbus get vnts_enable`
+vnt_wg_enable=`dbus get vnt_wg_enable`
 vnt_proxy_enable=`dbus get vnt_proxy_enable`
 vnt_W_enable=`dbus get vnt_W_enable`
 vnt_finger_enable=`dbus get vnt_finger_enable`
@@ -383,6 +384,7 @@ EOF
     else
        vnt_tunname="vnt-tun"
     fi
+    [ "$vnt_wg_enable" = "1" ] && vntcmd="$vntcmd --allow-wg"
     [ "$vnt_first_latency_enable" = "1" ] && vntcmd="$vntcmd --first-latency"
     if [ ! -z "$vnt_localadd" ] ; then
        if echo "$vnt_localadd" | grep -q '|'; then
