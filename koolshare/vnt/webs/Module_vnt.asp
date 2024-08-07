@@ -137,7 +137,7 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnt_local_ipv4", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_wg_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
@@ -937,9 +937,6 @@ function openssHint(itemNum) {
         } else if (itemNum == 12) {
 		statusmenu = "由于WireGuard是来自vnts转发的，如果vnts不受信任，这将会有安全隐患，所以VNT默认不允许WireGuard流量访问本机";
 		_caption = "接入wireguard客户端";
-	} else if (itemNum == 13) {
-		statusmenu = "设置本地出口网卡的ipv4地址";
-		_caption = "指定出口节点IP地址";
 	} else if (itemNum == 14) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
@@ -1169,7 +1166,7 @@ function get_installog(s) {
                                     <div style="float:left;" class="formfonttitle">VNT  异地组网、内网穿透工具</div>
                                     <div style="float:right; width:15px; height:25px;margin-top:10px"><img id="return_btn" onclick="reload_Soft_Center();" align="right" style="cursor:pointer;position:absolute;margin-left:-30px;margin-top:-25px;" title="返回软件中心" src="/images/backprev.png" onMouseOver="this.src='/images/backprevclick.png'" onMouseOut="this.src='/images/backprev.png'"></img></div>
                                     <div style="margin:30px 0 10px 5px;" class="splitLine"></div>
-                                    <div class="formfontdesc">VNT 是一个简便高效的异地组网、内网穿透工具。【仓库链接：<a href="https://github.com/lbl8603/vnt" target="_blank"><em><u>Github</u></em></a>】【使用文档：<a href="https://github.com/lbl8603/vnt/blob/main/vnt-cli/README.md" target="_blank"><em><u>客户端</u></em></a>&nbsp;&nbsp;<a href="https://github.com/lbl8603/vnts?tab=readme-ov-file#vnts" target="_blank"><em><u>服务端</u></em></a>】【安卓端：<a href="https://github.com/lbl8603/VntApp" target="_blank"><em><u>VntApp</u></em></a>】【QQ群：<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=o3Rr9xUWwAAnV9TkU_Nyj3yHNLs9k5F5&authKey=l1FKvqk7%2F256SK%2FHrw0PUhs%2Bar%2BtKYx0pLb7aiwBN9%2BKBCY8sOzWWEqtl4pdXAT7&noverify=0&group_code=1034868233" target="_blank"><em><u>vnt组网交流群</u></em></a>】<br/><i>  点击下方参数设置的文字，可查看帮助信息  </i></div>
+                                    <div class="formfontdesc">VNT 是一个简便高效的异地组网、内网穿透工具。【仓库链接：<a href="https://github.com/vnt-dev/vnt" target="_blank"><em><u>Github</u></em></a>】【使用文档：<a href="https://rustvnt.com" target="_blank"><em><u>官网</u></em></a>&nbsp;&nbsp;<a href="https://github.com/vnt-dev/vnt/blob/main/vnt-cli/README.md" target="_blank"><em><u>客户端</u></em></a>&nbsp;&nbsp;<a href="https://github.com/vnt-dev/vnts?tab=readme-ov-file#vnts" target="_blank"><em><u>服务端</u></em></a>】【安卓端GUI：<a href="https://github.com/vnt-dev/VntApp" target="_blank"><em><u>VntApp</u></em></a>】【QQ群：<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=o3Rr9xUWwAAnV9TkU_Nyj3yHNLs9k5F5&authKey=l1FKvqk7%2F256SK%2FHrw0PUhs%2Bar%2BtKYx0pLb7aiwBN9%2BKBCY8sOzWWEqtl4pdXAT7&noverify=0&group_code=1034868233" target="_blank"><em><u>vnt组网交流群</u></em></a>】<br/><i>  点击下方参数设置的文字，可查看帮助信息  </i></div>
                                     <div id="tablet_show">
                                         <table style="margin:10px 0px 0px 0px;border-collapse:collapse" width="100%" height="37px">
                                             <tr width="235px">
@@ -1320,12 +1317,8 @@ function get_installog(s) {
                                             <td>
                                                 <select id="vnt_ipv4_mode" name="vnt_ipv4_mode" style="width:165px;margin:0px 0px 0px 2px;" value="auto" class="input_option" >
                                                     <option value="auto">V4-V6都使用</option>
-						    <option value="ipv4">只使用IPV4</option>
+													<option value="ipv4">只使用IPV4</option>
                                                     <option value="ipv6">只使用IPV6</option>
-						    <option value="ipv4-tcp">只使用IPV4-tcp</option>
-                                                    <option value="ipv6-tcp">只使用IPV6-tcp</option>
-						    <option value="ipv4-udp">只使用IPV4-udp</option>
-                                                    <option value="ipv6-udp">只使用IPV6-udp</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -1338,7 +1331,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(16)">MTU</a></th>
                                             <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1300" />
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1450" />
                                             </td>
                                         </tr>
 										<tr>
@@ -1388,12 +1381,6 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(41)">端口映射(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
                                                 <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80->10.26.0.10:80"></textarea>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">出口节点地址</a></th>
-                                            <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_local_ipv4" name="vnt_local_ipv4" value="" placeholder=""/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1668,7 +1655,7 @@ function get_installog(s) {
 </div>
 <div style="margin:30px 0 10px 5px;" class="splitLine"></div>
 <div class="formbottomdesc" id="cmdDesc">
-    <i>* 注意事项：</i> 请先仔细查阅程序使用文档<br/><br/>
+    <i>* 注意事项：</i> 请先仔细查阅官网的使用文档<br/><br/>
     1、客户端的<i>token</i>为必填项，没有服务器也可单独使用客户端，已内置公共服务器<br/>
     2、<i>点击</i>参数标题的<i>文字</i>，可<i>查看帮助</i>信息。<br/>
 	3、若启动失败，请查看程序运行日志，有报错提示，或者通过SSH命令行启动测试。<br/>
