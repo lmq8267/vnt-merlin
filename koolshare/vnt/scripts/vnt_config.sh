@@ -24,6 +24,7 @@ vnt_cron_time=`dbus get vnt_cron_time`
 vnt_cron_hour_min=`dbus get vnt_cron_hour_min`
 vnts_cron_time=`dbus get vnts_cron_time`
 vnts_cron_hour_min=`dbus get vnts_cron_hour_min`
+vnt_local_ipv4=`dbus get vnt_local_ipv4`
 vnt_token=`dbus get vnt_token`
 vnt_compressor=`dbus get vnt_compressor`
 vnt_mapping=`dbus get vnt_mapping`
@@ -368,6 +369,7 @@ EOF
     [ ! -z "$vnt_desvice_id" ] && vntcmd="$vntcmd -d $vnt_desvice_id "
     [ ! -z "$vnt_desvice_name" ] && vntcmd="$vntcmd -n $vnt_desvice_name "
     [ ! -z "$vnt_serveraddr" ] && vntcmd="$vntcmd -s $vnt_serveraddr "
+    [ ! -z "$vnt_local_ipv4" ] && vntcmd="$vntcmd --local-ipv4 $vnt_local_ipv4 "
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
     [ ! -z "$vnt_par" ] && vntcmd="$vntcmd --par $vnt_par "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
