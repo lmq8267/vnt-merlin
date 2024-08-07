@@ -137,7 +137,7 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_token", "vnt_local_ipv4", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_wg_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
@@ -937,6 +937,9 @@ function openssHint(itemNum) {
         } else if (itemNum == 12) {
 		statusmenu = "由于WireGuard是来自vnts转发的，如果vnts不受信任，这将会有安全隐患，所以VNT默认不允许WireGuard流量访问本机";
 		_caption = "接入wireguard客户端";
+	} else if (itemNum == 13) {
+		statusmenu = "设置本地出口网卡的ipv4地址";
+		_caption = "指定出口节点IP地址";
 	} else if (itemNum == 14) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
@@ -1317,8 +1320,12 @@ function get_installog(s) {
                                             <td>
                                                 <select id="vnt_ipv4_mode" name="vnt_ipv4_mode" style="width:165px;margin:0px 0px 0px 2px;" value="auto" class="input_option" >
                                                     <option value="auto">V4-V6都使用</option>
-													<option value="ipv4">只使用IPV4</option>
+						    <option value="ipv4">只使用IPV4</option>
                                                     <option value="ipv6">只使用IPV6</option>
+						    <option value="ipv4-tcp">只使用IPV4-tcp</option>
+                                                    <option value="ipv6-tcp">只使用IPV6-tcp</option>
+						    <option value="ipv4-udp">只使用IPV4-udp</option>
+                                                    <option value="ipv6-udp">只使用IPV6-udp</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -1331,7 +1338,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(16)">MTU</a></th>
                                             <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1450" />
+                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1300" />
                                             </td>
                                         </tr>
 										<tr>
@@ -1381,6 +1388,12 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(41)">端口映射(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
                                                 <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80->10.26.0.10:80"></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">出口节点地址</a></th>
+                                            <td>
+                                                <input type="text" class="input_ss_table" value="" id="vnt_local_ipv4" name="vnt_local_ipv4" value="" placeholder=""/>
                                             </td>
                                         </tr>
                                         <tr>
