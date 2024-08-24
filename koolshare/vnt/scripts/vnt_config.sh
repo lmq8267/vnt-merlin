@@ -232,6 +232,7 @@ fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnt-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnt-cli" 
+[ -z "$tag" ] && tag=1.2.13
 [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
 vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
 if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
@@ -285,6 +286,7 @@ fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnts/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnts" 
+[ -z "$tag" ] && tag=1.2.13
 [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
 vnts_ver="$(${vnts_path} -V | awk '{print $2}')"
 if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
