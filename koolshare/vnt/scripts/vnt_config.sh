@@ -43,7 +43,6 @@ vnts_cron_type=`dbus get vnts_cron_type`
 vnt_port=`dbus get vnt_port`
 vnts_port=`dbus get vnts_port`
 vnt_mtu=`dbus get vnt_mtu`
-vnt_par=`dbus vnt_par`
 vnt_passmode=`dbus get vnt_passmode`
 vnt_key=`dbus get vnt_key`
 vnt_path=`dbus get vnt_path`
@@ -373,7 +372,6 @@ EOF
     [ ! -z "$vnt_serveraddr" ] && vntcmd="$vntcmd -s $vnt_serveraddr "
     [ ! -z "$vnt_local_ipv4" ] && vntcmd="$vntcmd --local-ipv4 $vnt_local_ipv4 "
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
-    [ ! -z "$vnt_par" ] && vntcmd="$vntcmd --par $vnt_par "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
     [ ! -z "$vnt_port" ] && vntcmd="$vntcmd --ports $vnt_port "
     [ ! -z "$vnt_key" ] && vntcmd="$vntcmd -w $vnt_key "
