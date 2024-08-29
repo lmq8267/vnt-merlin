@@ -137,7 +137,7 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_local_ipv4", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_par", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_local_ipv4", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_wg_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
@@ -952,9 +952,6 @@ function openssHint(itemNum) {
 	} else if (itemNum == 17) {
 		statusmenu = "定时执行操作。<font color='#F46'>检查：</font>检查vnt的进程是否存在，若不存在则重新启动；<font color='#F46'>启动：</font>重新启动vnt进程，而不论当时是否在正常运行。重新启动服务会导致活动中的连接短暂中断.<br><font color='#F46'>注意：</font>填写内容为 0 关闭定时功能！<br/>建议：选择分钟填写“60的因数”【1、2、3、4、5、6、10、12、15、20、30、60】，选择小时填写“24的因数”【1、2、3、4、6、8、12、24】。";
 		_caption = "定时功能";
-	} else if (itemNum == 18) {
-		statusmenu = "默认留空，任务并行度(必须为正整数),默认值为1,该值表示处理网卡读写的任务数,组网设备数较多、处理延迟较大时可适当调大此值";
-		_caption = " 并行任务数";
 	} else if (itemNum == 19) {
 		statusmenu = "设定客户端之间的加密连接使用的加密模式<br>默认off不加密，通常情况aes_gcm安全性高、aes_ecb性能更好，在低性能设备上aes_ecb/chacha20_poly1305/chacha20/xor速度最快<br>注意：xor为数据混淆，并不是一种强大的加密算法，易被破解，因此不适合用于真正的加密需求";
 		_caption = " 加密模式";
@@ -1339,12 +1336,6 @@ function get_installog(s) {
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(16)">MTU</a></th>
                                             <td>
                                         <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_mtu" name="vnt_mtu" value="" placeholder="1300" />
-                                            </td>
-                                        </tr>
-										<tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(18)">并行任务数</a></th>
-                                            <td>
-                                        <input type="text" oninput="this.value=this.value.replace(/[^\d]/g, '')" class="input_ss_table" id="vnt_par" name="vnt_par" value="" placeholder="1" />
                                             </td>
                                         </tr>
 										<tr>
