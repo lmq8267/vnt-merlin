@@ -235,7 +235,7 @@ logg "开始下载更新版本.." "vnt-cli"
 [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
 vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
 if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
- if [ "$vntcli_ver"x != "$tag"x ] ; then
+ if [ "$vntcli_ver"x != "$(echo $tag | tr -d 'v \n')"x ] ; then
    logg "发现新版本 vnt-cli_${tag} 开始下载..." "vnt-cli" 
    case "${cpucore}" in 
     "arm")  
