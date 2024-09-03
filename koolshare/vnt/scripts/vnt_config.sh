@@ -287,9 +287,9 @@ fi
 logg "开始下载更新版本.." "vnts" 
 [ -z "$tag" ] && tag=1.2.13
 [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
-vnts_ver="$(${vnts_path} -V | awk '{print $2}')"
+vnts_ver="$(${vnts_path} -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
 if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
- if [ "$vnts_ver"x != "$tag"x ] ; then
+ if [ "$vnts_ver"x != "$(echo $tag | tr -d 'v \n')"x ] ; then
    logg "发现新版本 vnts_${tag} 开始下载..." "vnts" 
    case "${cpucore}" in 
     "arm")  
@@ -309,7 +309,7 @@ if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
    if  [ $(($( /tmp/vnts -h | wc -l))) -lt 3 ] ; then
      logg "下载失败，无法更新..." "vnts"
    else
-     vnts_ver="$( /tmp/vnts -V | awk '{print $2}')"
+     vnts_ver="$( /tmp/vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
      if [ ! -z "$vnts_ver" ] ; then
      mv -f /tmp/vnts ${vnts_path}
      dbus set vnts_version=$vnts_ver
