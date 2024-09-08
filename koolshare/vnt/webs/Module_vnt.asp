@@ -1559,7 +1559,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(34)">指定子网掩码</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnts_mask" name="vnts_mask" maxlength="100" value="" placeholder="225.225.225.0"/>
+                                                <input type="text" class="input_ss_table" value="" id="vnts_mask" name="vnts_mask" maxlength="100" value="" placeholder="255.255.255.0"/>
                                             </td>
                                         </tr>
                                         <tr>
