@@ -137,11 +137,12 @@ input[type=button]:focus {
 </style>
 <script>
 var db_vnt = {};
-var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_local_ipv4", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
+var params_input = ["vnt_cron_time", "vnt_cron_hour_min","vnts_cron_time", "vnts_cron_hour_min", "vnt_local_dev", "vnt_token", "vnts_token","vnt_ipmode", "vnt_static_ip", "vnt_desvice_id", "vnt_desvice_name", "vnt_localadd", "vnt_peeradd", "vnt_serveraddr", "vnt_stunaddr", "vnt_ipv4_mode", "vnt_cron_type", "vnts_cron_type", "vnt_port", "vnts_port","vnt_mtu", "vnt_passmode", "vnt_key", "vnt_path", "vnts_path", "vnts_mask", "vnts_gateway", "vnt_relay_enable", "vnt_tun_name", "vnts_web_port", "vnts_web_user", "vnts_web_pass","vnts_web_enable","vnt_mapping","vnt_compressor"]
 var params_check = ["vnt_enable","vnts_enable","vnt_wg_enable","vnt_proxy_enable","vnt_W_enable","vnt_finger_enable","vnt_first_latency_enable","vnts_finger_enable","vnts_web_wan"]
 function initial() {
 	show_menu(menu_hook);
 	get_dbus_data();
+        get_vnt_ifconfig();
 	get_vnt_status();
 	toggle_func();
 	conf2obj();
@@ -177,6 +178,61 @@ function conf2obj() {
 		}
 	}
 }
+function get_vnt_ifconfig() {
+    var postData = {
+        "id": parseInt(Math.random() * 100000000),
+        "method": "vnt_ifconfig.sh",
+        "params": [],
+        "fields": ""
+    };
+    
+    // 发起 AJAX 请求，只进行一次处理
+    $.ajax({
+        type: "POST",
+        cache: false,
+        url: "/_api/",
+        data: JSON.stringify(postData),
+        dataType: "json",
+        success: function(response) {
+            var select = $('#vnt_local_dev');
+            var vntLocalDevValue = db_vnt['vnt_local_dev']; // 获取当前的值
+            // 清空下拉菜单并添加 "不绑定" 作为第一个选项
+            select.empty(); 
+            select.append('<option value="">不绑定</option>'); // 始终显示 "不绑定"
+            if (response.result && typeof response.result === "string") {
+                // 使用 & 符号分割接口
+                var interfaces = response.result.trim().split("&"); // 修剪字符串并按 & 分割
+                console.log("Parsed Interfaces:", interfaces); // 查看解析的接口数组
+                var hasValidInterfaces = false; // 标志变量，判断是否有有效接口
+                // 遍历接口并添加选项
+                interfaces.forEach(function(iface) {
+                    var parts = iface.split('|'); // 使用 | 分割接口名称和地址
+                    if (parts.length === 2) {
+                        var value = parts[0].trim(); // 接口名称
+                        var displayText = parts[0].trim() + ' (' + parts[1].trim() + ')'; // 显示文本
+                        var option = $('<option></option>').attr('value', value).text(displayText);
+                        // 如果当前值与接口值匹配，则设置为选中项
+                        if (vntLocalDevValue === value) {
+                            option.prop('selected', true); // 设置当前项为选中状态
+                        }
+                        select.append(option); // 添加选项到下拉列表
+                        hasValidInterfaces = true; // 设置标志为 true
+                    }
+                });
+                // 如果没有有效接口，仍然只会显示 "不绑定" 选项
+                if (!hasValidInterfaces) {
+                    console.log("No valid interfaces found.");
+                }
+            } else {
+                console.error("Invalid response format:", response);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", status, error);
+        }
+    });
+}
+
 function get_vnt_status() {
 		var postData = {
 			"id": parseInt(Math.random() * 100000000),
@@ -937,8 +993,8 @@ function openssHint(itemNum) {
 		statusmenu = "由于WireGuard是来自vnts转发的，如果vnts不受信任，这将会有安全隐患，所以VNT默认不允许WireGuard流量访问本机";
 		_caption = "接入wireguard客户端";
 	} else if (itemNum == 13) {
-		statusmenu = "设置本地出口网卡的ipv4地址";
-		_caption = "指定出口节点IP地址";
+		statusmenu = "设置作为流量出口的网卡，错误绑定网卡可能会导致无法上网，恢复不绑定即可";
+		_caption = "指定出口节点网卡";
 	} else if (itemNum == 14) {
 		statusmenu = "选择只使用IPV4进行连接，还是只使用IPV6进行连接，默认都使用";
 		_caption = "地址类型选择";
@@ -979,7 +1035,7 @@ function openssHint(itemNum) {
 		statusmenu = "启用后优先使用低延迟通道，默认情况下优先使用p2p通道，某些情况下可能p2p比客户端中继延迟更高，可启用此参数进行优化传输";
 		_caption = "优化传输";
 	} else if (itemNum == 28) {
-		statusmenu = "指定虚拟网卡名称，默认tun模式使用vnt-tun，tap模式使用vnt-tap<br>多开时需要使用不同的网卡名";
+		statusmenu = "指定虚拟网卡名称，默认tun模式使用vnt-tun<br>多开时需要使用不同的网卡名";
 		_caption = "网卡名称";
 	} else if (itemNum == 29) {
 		statusmenu = "开启vnts服务端选项，更新按钮为在线更新服务端程序版本，重启会同时重启客户端服务端";
@@ -1381,9 +1437,11 @@ function get_installog(s) {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">出口节点地址</a></th>
+                                            <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(13)">指定出口网卡</a></th>
                                             <td>
-                                                <input type="text" class="input_ss_table" value="" id="vnt_local_ipv4" name="vnt_local_ipv4" value="" placeholder=""/>
+                                                <select class="input_ss_table" id="vnt_local_dev" name="vnt_local_dev">
+                                                <option value="">不绑定</option> <!-- 添加空白选项 -->
+                                                </select>
                                             </td>
                                         </tr>
                                         <tr>
