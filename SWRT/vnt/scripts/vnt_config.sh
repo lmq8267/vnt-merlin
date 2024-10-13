@@ -370,7 +370,7 @@ EOF
     [ ! -z "$vnt_desvice_id" ] && vntcmd="$vntcmd -d $vnt_desvice_id "
     [ ! -z "$vnt_desvice_name" ] && vntcmd="$vntcmd -n $vnt_desvice_name "
     [ ! -z "$vnt_serveraddr" ] && vntcmd="$vntcmd -s $vnt_serveraddr "
-    [ "$vnt_local_dev" != "不绑定" ] && vntcmd="$vntcmd --local-dev $vnt_local_dev "
+    [ ! -z "$vnt_local_dev" ] && [ "$vnt_local_dev" != "不绑定" ] && vntcmd="$vntcmd --local-dev $vnt_local_dev "
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
     [ ! -z "$vnt_port" ] && vntcmd="$vntcmd --ports $vnt_port "
