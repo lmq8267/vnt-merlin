@@ -24,7 +24,7 @@ vnt_cron_time=`dbus get vnt_cron_time`
 vnt_cron_hour_min=`dbus get vnt_cron_hour_min`
 vnts_cron_time=`dbus get vnts_cron_time`
 vnts_cron_hour_min=`dbus get vnts_cron_hour_min`
-vnt_local_ipv4=`dbus get vnt_local_ipv4`
+vnt_local_dev=`dbus get vnt_local_dev`
 vnt_token=`dbus get vnt_token`
 vnt_compressor=`dbus get vnt_compressor`
 vnt_mapping=`dbus get vnt_mapping`
@@ -231,7 +231,7 @@ fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnt-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnt-cli" 
-[ -z "$tag" ] && tag=1.2.13
+[ -z "$tag" ] && tag=1.2.14
 [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
 vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
 if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
@@ -370,7 +370,7 @@ EOF
     [ ! -z "$vnt_desvice_id" ] && vntcmd="$vntcmd -d $vnt_desvice_id "
     [ ! -z "$vnt_desvice_name" ] && vntcmd="$vntcmd -n $vnt_desvice_name "
     [ ! -z "$vnt_serveraddr" ] && vntcmd="$vntcmd -s $vnt_serveraddr "
-    [ ! -z "$vnt_local_ipv4" ] && vntcmd="$vntcmd --local-ipv4 $vnt_local_ipv4 "
+    [ "$vnt_local_dev" != "不绑定" ] && vntcmd="$vntcmd --local-dev $vnt_local_dev "
     [ "$vnt_ipv4_mode" != "auto" ] && vntcmd="$vntcmd --punch $vnt_ipv4_mode "
     [ ! -z "$vnt_mtu" ] && vntcmd="$vntcmd -u $vnt_mtu "
     [ ! -z "$vnt_port" ] && vntcmd="$vntcmd --ports $vnt_port "
