@@ -81,8 +81,8 @@ cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
 [ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7"
 [ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64"
 scriptname=$(basename $0)
-  proxy_url="https://hub.gitmirror.com/"
-  proxy_url2="http://gh.ddlc.top/"
+proxy_url="https://hub.gitmirror.com/"
+proxy_url2="http://gh.ddlc.top/"
 # 时间同步
 fun_ntp_sync(){
     ntp_server=`nvram get ntp_server0`
@@ -94,7 +94,7 @@ fun_ntp_sync(){
 }
 
 logg () {
-   logger -t "【vnt】" "$1"
+   #logger -t "【vnt】" "$1"
    echo -e "\033[36;1m【$(TZ=UTC-8 date -R +%Y年%m月%d日\ %X)】: \033[0m\033[35;1m$1 \033[0m"
    if [ "$2" = "vnt-cli" ] ; then
    echo "【$(TZ=UTC-8 date -R +%Y年%m月%d日\ %X)】: $1 " >>$vnt_log
@@ -220,18 +220,18 @@ fun_updatevnt(){
 tag=""
 curltest=`which curl`
 if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=- https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 else
     tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 -s https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnt-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnt-cli" 
-[ -z "$tag" ] && tag=1.2.14
+[ -z "$tag" ] && tag=1.2.15
 [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
 vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
 if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
@@ -252,7 +252,7 @@ if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
    ;;
    esac
     chmod 755  /tmp/vnt-cli
-   if  [ $(($( /tmp/vnt-cli -h | wc -l))) -lt 3 ] ; then
+   if  [ $(($( /tmp/vnt-cli -h 2>&1 | wc -l))) -lt 3 ] ; then
      logg "下载失败，无法更新..." "vnt-cli"
    else
      vntcli_ver="$(/tmp/vnt-cli -h | grep version | awk -F ':' {'print $2'})"
@@ -274,12 +274,12 @@ fun_updatevnts(){
 tag=""
 curltest=`which curl`
 if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=- https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
    [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 else
     tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 -s https://api.github.com/repos/lmq8267/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
@@ -306,7 +306,7 @@ if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
    ;;
    esac
     chmod 755  /tmp/vnts
-   if  [ $(($( /tmp/vnts -h | wc -l))) -lt 3 ] ; then
+   if  [ $(($( /tmp/vnts -h 2>&1 | wc -l))) -lt 3 ] ; then
      logg "下载失败，无法更新..." "vnts"
    else
      vnts_ver="$( /tmp/vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
@@ -328,7 +328,7 @@ fun_start_vnt(){
     fun_nat_start
     [ ! -f "${vnt_path}" ] && fun_updatevnt
     [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
-    [ $(($( ${vnt_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt && fun_start_vnt
+    [ $(($( ${vnt_path} -h 2>&1 | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt && fun_start_vnt
     vntcmd=""
     vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
     dbus set vntcli_version=$vntcli_ver
@@ -490,7 +490,7 @@ fun_start_vnts(){
     fun_nat_start
     [ ! -f "${vnts_path}" ] && fun_updatevnts
     [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
-    [ $(($( ${vnts_path} -h | wc -l))) -lt 3 ] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
+    [ $(($( ${vnts_path} -h 2>&1 | wc -l))) -lt 3 ] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
     vntscmd=""
     vnts_ver="$(${vnts_path} -V | awk '{print $2}')"
     dbus set vnts_version=$vnts_ver
@@ -533,7 +533,7 @@ appenders:
     path: /home/root/log/vnts.log
     append: true
     encoder:
-      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnts:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
