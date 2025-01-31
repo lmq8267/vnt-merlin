@@ -6,15 +6,29 @@ on:
         description: '请填写发布的说明'
         required: false
         default: ''
+env:
+  TZ: Asia/Shanghai
+
+#设置仓库的读写权限
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: delete-workflow
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          retain_days: 0
+          keep_minimum_runs: 0
       - name: tar
         run: |
-          git clone https://github.com/lmq8267/vnt-merlin /opt/src
+          git clone https://github.com/${{ github.repository }} /opt/src
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           sudo timedatectl set-timezone "Asia/Shanghai"
@@ -28,7 +42,6 @@ jobs:
           if git status --porcelain | grep .; then
           git add .
           git commit -am "${{ github.event.inputs.text }} 更新时间： $(date '+%Y-%m-%d %H:%M:%S')"
-          git push --quiet "https://${{ secrets.c8 }}@github.com/lmq8267/vnt-merlin.git"
           else
           echo "没有任何变动，无需上传提交！"
           fi 
@@ -36,15 +49,15 @@ jobs:
           echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
       - 
         name: 发布
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.c8 }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
            > ### 更新时间：${{ env.tar_time }}
 
-           - **vnt-SWRT.tar.gz**：SWRT梅林的离线安装包
+           - **vnt-SWRT.tar.gz**：SWRT改版梅林的离线安装包
 
-           - **vnt-koolshare.tar.gz**：koolshare梅林的离线安装包
+           - **vnt-koolshare.tar.gz**：koolshare改版梅林的离线安装包
 
            ${{ github.event.inputs.text }}
 
@@ -52,11 +65,8 @@ jobs:
           files: |
             /opt/src/SWRT/vnt-SWRT.tar.gz
             /opt/src/koolshare/vnt-koolshare.tar.gz
-      - 
-       name: 删除工作流
-       uses: GitRML/delete-workflow-runs@main
-       with:
-        token: ${{ secrets.c8 }}
-        retain_days: 1
-        keep_minimum_runs: 0
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          force_with_lease: true
      
