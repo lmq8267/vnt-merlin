@@ -45,7 +45,7 @@ jobs:
           else
           echo "没有任何变动，无需上传提交！"
           fi 
-          echo "tar_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+          echo "tar_time=$(date '+%Y年%m月%d日%H:%M:%S' | jq -sRr @uri)" >> $GITHUB_ENV
           echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
       - 
         name: 发布
@@ -53,7 +53,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-           > ### 更新时间：${{ env.tar_time }}
+           > ### ![](https://img.shields.io/badge/%E6%89%93%E5%8C%85%E6%97%B6%E9%97%B4-${{ env.tar_time }}-8267?logo=github&labelColor=%E9%A1%BB)![](https://img.shields.io/github/downloads/${GITHUB_REPOSITORY}/${{ env.tag }}/total?label=%E4%B8%8B%E8%BD%BD%E6%AC%A1%E6%95%B0&logo=github)
 
            - **vnt-SWRT.tar.gz**：SWRT改版梅林的离线安装包
 
