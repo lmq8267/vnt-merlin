@@ -28,17 +28,16 @@ jobs:
           keep_minimum_runs: 0
       - name: tar
         run: |
-          git clone https://github.com/${{ github.repository }} /opt/src
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           sudo timedatectl set-timezone "Asia/Shanghai"
-          cd /opt/src/SWRT
+          cd ./SWRT
           rm -rf vnt-SWRT.tar.gz 
           tar czvf vnt-SWRT.tar.gz vnt
-          cd /opt/src/koolshare
+          cd ../koolshare
           rm -rf vnt-koolshare.tar.gz
           tar czvf vnt-koolshare.tar.gz vnt
-          cd /opt/src
+          cd ../
           if git status --porcelain | grep .; then
           git add .
           git commit -am "${{ github.event.inputs.text }} 更新时间： $(date '+%Y-%m-%d %H:%M:%S')"
@@ -63,8 +62,8 @@ jobs:
 
           tag_name: ${{ env.tag }}
           files: |
-            /opt/src/SWRT/vnt-SWRT.tar.gz
-            /opt/src/koolshare/vnt-koolshare.tar.gz
+            SWRT/vnt-SWRT.tar.gz
+            koolshare/vnt-koolshare.tar.gz
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
