@@ -252,7 +252,7 @@ if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
    ;;
    esac
     chmod 755  /tmp/vnt-cli
-   if  [ $(($( /tmp/vnt-cli -h 2>&1 | wc -l))) -lt 3 ] ; then
+   if [[ "$(/tmp/vnt-cli -h 2>&1 | wc -l)" -lt 3 ]] ; then
      logg "下载失败，无法更新..." "vnt-cli"
    else
      vntcli_ver="$(/tmp/vnt-cli -h | grep version | awk -F ':' {'print $2'})"
@@ -306,10 +306,10 @@ if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
    ;;
    esac
     chmod 755  /tmp/vnts
-   if  [ $(($( /tmp/vnts -h 2>&1 | wc -l))) -lt 3 ] ; then
+   if [[ "$(/tmp/vns -h 2>&1 | wc -l)" -lt 3 ]] ; then
      logg "下载失败，无法更新..." "vnts"
    else
-     vnts_ver="$( /tmp/vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
+     vnts_ver="$(/tmp/vnts -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
      if [ ! -z "$vnts_ver" ] ; then
      mv -f /tmp/vnts ${vnts_path}
      dbus set vnts_version=$vnts_ver
@@ -327,8 +327,8 @@ fi
 fun_start_vnt(){
      fun_nat_start
     [ ! -f "${vnt_path}" ] && fun_updatevnt
-    [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
-    [ $(($( ${vnt_path} -h 2>&1 | wc -l))) -lt 3 ] && rm -rf ${vnt_path} && fun_updatevnt
+    [ -x "${vnt_path}" ] || chmod 755 ${vnt_path} 
+    [[ "$($vnt_path -h 2>&1 | wc -l)" -lt 3 ]] && rm -rf ${vnt_path} && fun_updatevnt
     vntcmd=""
     vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
     dbus set vntcli_version=$vntcli_ver
@@ -490,7 +490,7 @@ fun_start_vnts(){
      fun_nat_start
     [ ! -f "${vnts_path}" ] && fun_updatevnts
     [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
-    [ $(($( ${vnts_path} -h 2>&1 | wc -l))) -lt 3 ] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
+    [[ "$($vnts_path -h 2>&1 | wc -l)" -lt 3 ]] && rm -rf ${vnts_path} && fun_updatevnts && fun_start_vnts
     vntscmd=""
     vnts_ver="$(${vnts_path} -V | awk '{print $2}')"
     dbus set vnts_version=$vnts_ver
