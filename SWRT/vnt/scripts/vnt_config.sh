@@ -625,7 +625,7 @@ vnt_cmds(){
    [ "$day" = "0" ] && day=''|| day=" $day天"
    time=`date -u -d @${time} +%H小时%M分%S秒`
    fi
-   [ ! -z "$time" ] && echo "vnt-cli 已运行 $time" >>/tmp/upload/vnt_cmd.log 2>&1
+   [ ! -z "$time" ] && echo "vnt-cli 已运行 ${day}${time}" >>/tmp/upload/vnt_cmd.log 2>&1
    cmdtart=`dbus get vnt_startcmd`
    [ ! -z "$cmdtart" ] && echo "vnt-cli启动参数  $cmdtart" >>/tmp/upload/vnt_cmd.log 2>&1
    echo "流量统计：" >>/tmp/upload/vnt_cmd.log 2>&1
@@ -644,7 +644,7 @@ vnts_cmds(){
    [ "$day" = "0" ] && day=''|| day=" $day天"
    time=`date -u -d @${time} +%H小时%M分%S秒`
    fi
-   [ ! -z "$time" ] && echo "已运行 $time" >>/tmp/upload/vnts_cmd.log 2>&1
+   [ ! -z "$time" ] && echo "已运行 ${day}${time}" >>/tmp/upload/vnts_cmd.log 2>&1
    cmdstart=`dbus get vnt_startcmds`
    [ ! -z "$cmdstart" ] && echo "vnts启动参数  $cmdstart" >>/tmp/upload/vnts_cmd.log 2>&1
 }
