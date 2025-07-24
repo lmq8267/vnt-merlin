@@ -643,7 +643,7 @@ vnts_cmds(){
    [ "$day" = "0" ] && day=''|| day=" $day天"
    time=`date -u -d @${time} +%H小时%M分%S秒`
    fi
-   [ ! -z "$time" ] && echo "已运行 $time" >>/tmp/upload/vnts_cmd.log 2>&1
+   [ ! -z "$time" ] && echo "已运行 ${day}${time}" >>/tmp/upload/vnts_cmd.log 2>&1
    cmdstart=`dbus get vnt_startcmds`
    [ ! -z "$cmdstart" ] && echo "vnts启动参数  $cmdstart" >>/tmp/upload/vnts_cmd.log 2>&1
 }
