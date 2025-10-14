@@ -38,8 +38,8 @@ install_tar(){
 
 	if [ -f ${vnt_DIR}/${vnt_name} ];then
 		local _SIZE=$(ls -lh $vnt_DIR/${vnt_name}|awk '{print $5}')
-		echo_date "注意：压缩包文件 - 客户端程序文件名请包含vnt-cli  服务端文件名请包含vnts"
-		echo_date "注意：二进制文件 - 客户端程序文件名必须为vnt-cli  服务端文件名必须为vnts"
+		echo_date "注意：上传压缩包文件时 - 客户端文件名请包含vnt-cli  服务端文件名请包含vnts"
+		echo_date "注意：上传二进制文件时 - 客户端文件名必须为vnt-cli  服务端文件名必须为vnts"
 		echo_date "${vnt_DIR}目录下检测到上传的文件${vnt_name}，大小：${_SIZE}"
 		local JFFS_AVAIL=$(df | grep -w "/jffs$" | awk '{print $4}')
 	        #ubifs自带压缩，以压缩包大小为准

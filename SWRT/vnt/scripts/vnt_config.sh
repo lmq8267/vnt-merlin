@@ -81,8 +81,8 @@ cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
 [ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7"
 [ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64"
 scriptname=$(basename $0)
-proxy_url="https://hub.gitmirror.com/"
-proxy_url2="http://gh.ddlc.top/"
+proxy_url="https://ghproxy.net/"
+proxy_url2="https://gh-proxy.com/"
 # 时间同步
 fun_ntp_sync(){
     ntp_server=`nvram get ntp_server0`
@@ -416,7 +416,7 @@ EOF
        if echo "$vnt_stunaddr" | grep -q '|'; then
           stunaddr=""
          for stunval in $(echo $vnt_stunaddr | awk -F"|" '{for (i=1;i<=NF;i++) print $i}'); do
-          stunaddr="$peeradd -e $stunval"
+          stunaddr="$stunaddr -e $stunval"
           done
           stunaddr=$stunaddr
           vntcmd="$vntcmd $stunaddr "
@@ -456,7 +456,7 @@ EOF
     cd $(dirname $vnt_path)
     
     killall vnt-cli 2>/dev/null
-    ./vnt-cli ${vntcmd} >>/home/root/log/vnt-cli.log 2>&1 &
+    ./vnt-cli ${vntcmd} --disable-stats >>/home/root/log/vnt-cli.log 2>&1 &
    sleep 5
    [ ! -z "$(pidof vnt-cli)" ] && logg "vnt-cli_${vntcli_ver}客户端启动成功！" "vnt-cli" 
    echo `date +%s` > /tmp/vnt_time

@@ -20,6 +20,11 @@ fi
 find /jffs/softcenter/init.d/ -name "*vnt.sh*"|xargs rm -rf
 cd /tmp
 
+cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
+[ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm"
+[ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7"
+[ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64"
+[ -n "$cpucore" ] && cp -rf "/tmp/vnt/bin/vnt-cli_${cpucore}" /jffs/softcenter/bin/vnt-cli
 cp -rf /tmp/vnt/scripts/* /jffs/softcenter/scripts/
 cp -rf /tmp/vnt/webs/* /jffs/softcenter/webs/
 cp -rf /tmp/vnt/res/* /jffs/softcenter/res/
@@ -27,7 +32,7 @@ cp /tmp/vnt/uninstall.sh /jffs/softcenter/scripts/uninstall_vnt.sh
 ln -sf /jffs/softcenter/scripts/vnt_config.sh /jffs/softcenter/init.d/S99vnt.sh
 
 
-
+[ -f /jffs/softcenter/bin/vnt-cli ] && chmod +x /jffs/softcenter/bin/vnt-cli
 chmod +x /jffs/softcenter/scripts/vnt_*
 chmod +x /jffs/softcenter/init.d/S99vnt.sh
 chmod +x /jffs/softcenter/scripts/uninstall_vnt.sh

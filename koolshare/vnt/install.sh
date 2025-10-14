@@ -20,14 +20,18 @@ if [ "${en}"x = "1"x ] || [ "${en2}"x = "1"x ] ; then
 fi
 find /koolshare/init.d/ -name "*vnt.sh*"|xargs rm -rf
 cd /tmp
-
+cputype=$(uname -ms | tr ' ' '_' | tr '[A-Z]' '[a-z]')
+[ -n "$(echo $cputype | grep -E "linux.*armv.*")" ] && cpucore="arm"
+[ -n "$(echo $cputype | grep -E "linux.*armv7.*")" ] && [ -n "$(cat /proc/cpuinfo | grep vfp)" ] && cpucore="armv7"
+[ -n "$(echo $cputype | grep -E "linux.*aarch64.*|linux.*armv8.*")" ] && cpucore="aarch64"
+[ -n "$cpucore" ] && cp -rf "/tmp/vnt/bin/vnt-cli_${cpucore}" /koolshare/bin/vnt-cli
 cp -rf /tmp/vnt/scripts/* /koolshare/scripts/
 cp -rf /tmp/vnt/webs/* /koolshare/webs/
 cp -rf /tmp/vnt/res/* /koolshare/res/
 cp /tmp/vnt/uninstall.sh /koolshare/scripts/uninstall_vnt.sh
 ln -sf /koolshare/scripts/vnt_config.sh /koolshare/init.d/S49vnt.sh
 
-
+[ -f /koolshare/bin/vnt-cli ] && chmod +x /koolshare/bin/vnt-cli
 chmod +x /koolshare/scripts/vnt_*
 chmod +x /koolshare/scripts/uninstall_vnt.sh
 chmod +x /koolshare/init.d/S49vnt.sh
