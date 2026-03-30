@@ -1075,7 +1075,7 @@ function openssHint(itemNum) {
 		statusmenu = "开启后在外网将可以访问WEB管理界面，为安全起见，建议设置复杂的用户名和密码，定期更换，避免泄露";
 		_caption = "外网访问WEB";
 	} else if (itemNum == 41) {
-		statusmenu = "端口映射,可以设置多个映射地址以<font color='#F46'>|</font>分隔即可，例如<font color='#F46'>udp:0.0.0.0:80->10.26.0.10:80|tcp:0.0.0.0:80->10.26.0.11:81</font><br>表示将本地udp 80端口的数据转发到10.26.0.10:80，将本地tcp 80端口的数据转发到10.26.0.11:81，转发的目的地址可以使用域名+端口";
+		statusmenu = "端口映射,可以设置多个映射地址以<font color='#F46'>|</font>分隔即可，例如<font color='#F46'>udp:0.0.0.0:80-10.26.0.10:80|tcp:0.0.0.0:80-10.26.0.11:81</font><br>表示将本地udp 80端口的数据转发到10.26.0.10:80，将本地tcp 80端口的数据转发到10.26.0.11:81，转发的目的地址可以使用域名+端口";
 		_caption = "端口映射";
 	} else if (itemNum == 42) {
 		statusmenu = "启用压缩，默认仅支持lz4压缩，开启压缩后，如果数据包长度大于等于128，则会使用压缩，否则还是会按原数据发送<br><font color='#F46'>也支持开启zstd压缩，但是需要自行编译，编译时加入参数--features zstd 确保程序已支持zstd压缩再选用zstd</font><br>如果宽度速度比较慢，可以考虑使用高级别的压缩";
@@ -1434,7 +1434,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(41)">端口映射(<i>多个以 | 隔开</i>)</a></th>
                                             <td>
-                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80->10.26.0.10:80"></textarea>
+                                                <textarea  type="text" class="input_ss_table" value="" id="vnt_mapping" name="vnt_mapping"  value="" placeholder="tcp:0.0.0.0:80-10.26.0.10:80"></textarea>
                                             </td>
                                         </tr>
                                         <tr>
