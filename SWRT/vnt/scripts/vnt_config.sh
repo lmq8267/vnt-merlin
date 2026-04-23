@@ -231,7 +231,7 @@ fi
 [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnt-cli/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnt-cli/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnt-cli" 
-[ -z "$tag" ] && tag=v1.2.16
+[ -z "$tag" ] && tag=v1.2.17
 [ -x "${vnt_path}" ] || chmod 755 ${vnt_path}
 vntcli_ver="$(${vnt_path} -h | grep version | awk -F ':' {'print $2'})"
 if [ ! -z "$vntcli_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnt_path" ] ; then
@@ -274,20 +274,20 @@ fun_updatevnts(){
 tag=""
 curltest=`which curl`
 if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=- https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-   [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-   [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=- https://api.github.com/repos/lmq8267/vnt_s/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnt_s/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+   [ -z "$tag" ] && tag="$( wget -T 5 -t 3 --output-document=-  https://api.github.com/repos/lmq8267/vnt_s/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 else
-    tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 -s https://api.github.com/repos/lmq8267/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
+    tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnt_s/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    [ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s https://api.github.com/repos/lmq8267/vnt_s/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 -s https://api.github.com/repos/lmq8267/vnt_s/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 fi
-[ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnts/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
+[ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/lmq8267/vnt_s/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
 [ -z "$tag" ] && tag="$(curl -k --silent "https://api.github.com/repos/lmq8267/vnts/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')"
 logg "开始下载更新版本.." "vnts" 
 [ -z "$tag" ] && tag=1.2.13
 [ -x "${vnts_path}" ] || chmod 755 ${vnts_path}
-vnts_ver="$(${vnts_path} -V | awk -F 'version: ' '{print $2}' | tr -d ' \n')"
+vnts_ver="$(${vnts_path} -V | awk -F 'version: ' '{print $2}' | tr -d 'v \n')"
 if [ ! -z "$vnts_ver" ] && [ ! -z "$tag" ] || [ ! -f "$vnts_path" ]  ; then
  if [ "$vnts_ver"x != "$(echo $tag | tr -d 'v \n')"x ] ; then
    logg "发现新版本 vnts_${tag} 开始下载..." "vnts" 
@@ -417,18 +417,6 @@ EOF
           stunaddr=""
          for stunval in $(echo $vnt_stunaddr | awk -F"|" '{for (i=1;i<=NF;i++) print $i}'); do
           stunaddr="$stunaddr -e $stunval"
-          done
-          stunaddr=$stunaddr
-          vntcmd="$vntcmd $stunaddr "
-      else
-         vntcmd="$vntcmd -e $vnt_stunaddr "
-       fi
-    fi
-    if [ ! -z "$vnt_stunaddr" ] ; then
-       if echo "$vnt_stunaddr" | grep -q '|'; then
-          stunaddr=""
-         for stunval in $(echo $vnt_stunaddr | awk -F"|" '{for (i=1;i<=NF;i++) print $i}'); do
-          stunaddr="$peeradd -e $stunval"
           done
           stunaddr=$stunaddr
           vntcmd="$vntcmd $stunaddr "
