@@ -1385,7 +1385,7 @@ function get_installog(s) {
                                         <tr>
                                             <th width="20%"><a class="hintstyle" href="javascript:void(0);" onclick="openssHint(15)">监听端口</a></th>
                                             <td>
-                                        <input type="text" class="input_ss_table" id="vnt_port" name="vnt_port" maxlength="100" placeholder="0,0" oninput="this.value=this.value.replace(/[^0-9,]/g,'').replace(/,{2,}/g,',').replace(/^,|,$/g,'');let p=this.value.split(',');for(let i=0;i<p.length;i++){if(p[i]!==''&&parseInt(p[i])>65535)p[i]='65535';}this.value=p.join(',');">
+                                        <input type="text" class="input_ss_table" id="vnt_port" name="vnt_port" maxlength="100" placeholder="0,0" oninput="this.value=this.value.replace(/[^0-9,]/g,'').replace(/,{2,}/g,',');var parts=this.value.split(',');for(var i=0;i<parts.length;i++){if(parts[i]!==''&&parseInt(parts[i])>65535){parts[i]='65535';}}this.value=parts.join(',');" onblur="this.value=this.value.replace(/^,|,$/g,'');">
                                             </td>
                                         </tr>
                                         <tr>
